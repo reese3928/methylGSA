@@ -19,7 +19,7 @@
 #' @references Carlson M (2017). org.Hs.eg.db: Genome wide annotation for Human. R package version 3.5.0.
 #' @examples
 #' library(IlluminaHumanMethylation450kanno.ilmn12.hg19)
-#' res = methylglm(cpg.pval = cpg.pval, minsize = 200, maxsize = 220)
+#' res = methylglm(cpg.pval = cpg.pval, minsize = 200, maxsize = 210)
 #' head(res, 15)
 
 methylglm <- function(cpg.pval, array.type = "450K", GS.list=NULL, GS.idtype = "SYMBOL", GS.type = "GO", minsize = 100, maxsize = 500){

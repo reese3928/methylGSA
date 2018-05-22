@@ -27,7 +27,7 @@
 #' @references Hansen KD (2017). IlluminaHumanMethylationEPICanno.ilm10b3.hg19: Annotation for Illumina's EPIC methylation arrays. R package version 0.6.0, https://bitbucket.com/kasperdanielhansen/Illumina_EPIC.
 #' @examples
 #' library(IlluminaHumanMethylation450kanno.ilmn12.hg19)
-#' res = methylgometh(cpg.pval = cpg.pval, sig.cut = 0.001, minsize = 200, maxsize = 220)
+#' res = methylgometh(cpg.pval = cpg.pval, sig.cut = 0.001, minsize = 200, maxsize = 210)
 #' head(res, 15)
 
 methylgometh <- function(cpg.pval, sig.cut, array.type = "450K", GS.list=NULL, GS.idtype = "SYMBOL", GS.type = "GO", minsize = 100, maxsize = 500){
