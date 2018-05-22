@@ -68,7 +68,7 @@ Here is what the input vector looks like:
 ```{r}
 library(methylGO)
 library(IlluminaHumanMethylation450kanno.ilmn12.hg19)
-library(IlluminaHumanMethylationEPICanno.ilm10b3.hg19)
+#library(IlluminaHumanMethylationEPICanno.ilm10b3.hg19)
 ```
 
 ```{r}
@@ -79,7 +79,7 @@ head(cpg.pval, 20)
 Once the input vector is ready, we call methylglm:
 
 ```{r}
-res1 = methylglm(cpg.pval = cpg.pval, minsize = 200, maxsize = 220)
+res1 = methylglm(cpg.pval = cpg.pval, minsize = 200, maxsize = 210)
 head(res1, 15)
 ```
 
@@ -102,14 +102,14 @@ In GSEA approach, for gene $i$, we also convert $\rho$ score into p-value by Bon
 To apply ORA approach, we use argument `method = "ORA"` in methylRRA
 
 ```{r}
-res2 = methylRRA(cpg.pval = cpg.pval, method = "ORA", minsize = 200, maxsize = 220)
+res2 = methylRRA(cpg.pval = cpg.pval, method = "ORA", minsize = 200, maxsize = 210)
 head(res2, 15)
 ```
 
 To apply GSEA approach, we use argument `method = "GSEA"` in methylRRA
 
 ```{r}
-res3 = methylRRA(cpg.pval = cpg.pval, method = "GSEA", minsize = 200, maxsize = 220)
+res3 = methylRRA(cpg.pval = cpg.pval, method = "GSEA", minsize = 200, maxsize = 210)
 head(res3, 10)
 ```
 
@@ -124,7 +124,7 @@ methylgometh requires two inputs, `cpg.pval` and `sig.cut`. `sig.cut` specifies 
 ### Example
 
 ```{r}
-res4 = methylgometh(cpg.pval = cpg.pval, sig.cut = 0.001, minsize = 200, maxsize = 220)
+res4 = methylgometh(cpg.pval = cpg.pval, sig.cut = 0.001, minsize = 200, maxsize = 210)
 head(res4, 15)
 ```
 
@@ -161,7 +161,7 @@ head(res5, 10)
 Here is another example. Test Reactome pathways using methylglm
 
 ```{r}
-res6 = methylglm(cpg.pval = cpg.pval, array.type = "450K", GS.type = "Reactome", minsize = 100, maxsize = 120)
+res6 = methylglm(cpg.pval = cpg.pval, array.type = "450K", GS.type = "Reactome", minsize = 100, maxsize = 110)
 head(res6, 10)
 ```
 
