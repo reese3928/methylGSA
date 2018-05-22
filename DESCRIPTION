@@ -1,0 +1,23 @@
+Package: methylGO
+Type: Package
+Title: methylGO: Gene Set Analysis Using the Outcome of Differential Methylation
+Version: 0.99.0
+Author: Pei Fen Kuan and Xu Ren
+Maintainer: Xu Ren <xuren2120@gmail.com>
+Description: The main functions for methylGO are methylglm and methylRRA.
+    methylGO implements logistic regression adjusting number of probes as a covariate.
+    methylRRA adjusts multiple p-values of each gene by Robust Rank Aggregation.
+    For more detailed help information, please see the vignette.
+Encoding: UTF-8
+LazyData: true
+Imports:
+  RobustRankAggreg,stringr,stats,minfi,clusterProfiler,missMethyl,org.Hs.eg.db,reactome.db,AnnotationDbi,IlluminaHumanMethylation450kanno.ilmn12.hg19,IlluminaHumanMethylationEPICanno.ilm10b3.hg19
+Depends:
+  R (>= 3.4)
+Suggests:
+  knitr,
+    rmarkdown
+License: GPL-2
+RoxygenNote: 6.0.1
+VignetteBuilder: knitr
+biocViews: DNAMethylation,DifferentialMethylation,GeneSetEnrichment,Regression
