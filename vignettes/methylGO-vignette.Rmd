@@ -153,6 +153,7 @@ head(lapply(GS.list, function(x) return(x[1:30])), 3)
 Test these gene sets using "ORA" in methylRRA
 
 ```{r}
+GS.list = GS.list[1:30]
 res5 = methylRRA(cpg.pval = cpg.pval, array.type = "450K", method = "ORA", GS.list = GS.list, GS.idtype = "SYMBOL", minsize = 100, maxsize = 300)
 head(res5, 10)
 ```
@@ -160,7 +161,7 @@ head(res5, 10)
 Here is another example. Test Reactome pathways using methylglm
 
 ```{r}
-res6 = methylglm(cpg.pval = cpg.pval, array.type = "450K", GS.type = "Reactome", minsize = 100, maxsize = 200)
+res6 = methylglm(cpg.pval = cpg.pval, array.type = "450K", GS.type = "Reactome", minsize = 100, maxsize = 120)
 head(res6, 10)
 ```
 
