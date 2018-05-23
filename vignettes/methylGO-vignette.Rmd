@@ -3,21 +3,22 @@ title: "methylGO: Gene Set Analysis for DNA Methylation Datasets"
 author: "Pei Fen Kuan and Xu Ren"
 date: "`r Sys.Date()`"
 output: 
-  rmarkdown::html_document:
-    highlight: pygments
-    toc: true
+    rmarkdown::html_document:
+        highlight: pygments
+        toc: true
 
 vignette: >
-  %\VignetteIndexEntry{methylGO: Gene Set Analysis for DNA Methylation Datasets}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+    %\VignetteIndexEntry{methylGO: 
+        Gene Set Analysis for DNA Methylation Datasets}
+    %\VignetteEngine{knitr::rmarkdown}
+    %\VignetteEncoding{UTF-8}
 bibliography: library.bib
 ---
 
 <style type="text/css">
 
 body{ /* Normal  */
-      font-size: 15px;
+    font-size: 15px;
 }
 
 </style>
@@ -28,13 +29,23 @@ knitr::opts_chunk$set(comment = "", message=FALSE, warning = FALSE)
 
 ## Introduction
 
-The methylGO package contains functions to carry out gene set analysis adjusting for the number of probes of each gene. It has been shown by [@geeleher2013gene] that gene set analysis is extremely biased for DNA methylation data. This package contains three functions to adjust for the bias in gene set analysis. 
+The methylGO package contains functions to carry out gene set analysis 
+adjusting for the number of probes of each gene. It has been shown by 
+[@geeleher2013gene] that gene set analysis is extremely biased for DNA 
+methylation data. This package contains three functions to adjust for the 
+bias in gene set analysis. 
 
-* methylglm: Incorporating number of probes as a covariate in logistic regression. 
+* methylglm: Incorporating number of probes as a covariate in 
+logistic regression. 
 
-* methylRRA: Adjusting for multiple p-values of each gene by Robust Rank Aggregation [@kolde2012robust], and then apply either over-representation analysis (ORA) or Gene Set Enrichment Analysis (GSEA) [@subramanian2005gene] in gene set testing. 
+* methylRRA: Adjusting for multiple p-values of each gene by Robust 
+Rank Aggregation [@kolde2012robust], and then apply either 
+over-representation analysis (ORA) or Gene Set Enrichment 
+Analysis (GSEA) [@subramanian2005gene] in gene set testing. 
 
-* methylgometh: Adjusting the number of probes for each gene by weighted resampling and Wallenius non-central hypergeometric approximation. (via missMethyl [@phipson2015missmethyl])
+* methylgometh: Adjusting the number of probes for each gene by 
+weighted resampling and Wallenius non-central hypergeometric approximation. 
+(via missMethyl [@phipson2015missmethyl])
 
 ## Supported gene sets/pathways and gene ID types
 
@@ -54,12 +65,19 @@ The methylGO package contains functions to carry out gene set analysis adjusting
 
 ## Description of methylglm
 
-methylglm is an extention of GOglm [@mi2012length]. GOglm adjusts length bias for RNA-Seq data by incorporating gene length as a covariate in logistic regression model. We adjust length bias in DNA methylation by the number of probes instead of gene length. For each gene set, we fit a logistic regression model:
+methylglm is an extention of GOglm [@mi2012length]. GOglm adjusts 
+length bias for RNA-Seq data by incorporating gene length as a covariate 
+in logistic regression model. We adjust length bias in DNA methylation by 
+the number of probes instead of gene length. For each gene set, we fit a 
+logistic regression model:
 
 $$logit (\pi_{i}) = \beta_{0} + \beta_{1}x_{i} + \beta_{2}c_{i}$$
-For each gene $i$, $\pi_{i}$ = Pr(gene $i$ is in gene set), $x_{i}$ represents negative log transform of its minimum p-value, and $c_{i}$ is log transform of its number of probes.
+For each gene $i$, $\pi_{i}$ = Pr(gene $i$ is in gene set), $x_{i}$ represents 
+negative log transform of its minimum p-value, and $c_{i}$ is log transform of 
+its number of probes.
 
-methylglm requires only a simple named vector. This vector contains p-values of each probe. Names should be their corresponding probe IDs. 
+methylglm requires only a simple named vector. This vector contains p-values of 
+each probe. Names should be their corresponding probe IDs. 
 
 ### Example
 
@@ -68,11 +86,10 @@ Here is what the input vector looks like:
 ```{r}
 library(methylGO)
 library(IlluminaHumanMethylation450kanno.ilmn12.hg19)
-#library(IlluminaHumanMethylationEPICanno.ilm10b3.hg19)
 ```
 
 ```{r}
-#data(cpg.pval)
+data(cpgtoy)
 head(cpg.pval, 20)
 ```
 
@@ -88,28 +105,49 @@ Result is a data frame ranked by pvalues of gene sets.
 
 ## Description of methylRRA
 
-Robust rank aggregation[@kolde2012robust] is a parameter free model that aggregates several ranked gene lists into a single gene list. The aggregation assumes random order of input lists and assign each gene a p-value based on order statistics. We apply this order statistics idea to adjust for number of probes. 
+Robust rank aggregation[@kolde2012robust] is a parameter free model that 
+aggregates several ranked gene lists into a single gene list. The aggregation 
+assumes random order of input lists and assign each gene a p-value based on 
+order statistics. We apply this order statistics idea to adjust for number 
+of probes. 
 
-For gene $i$, let $P_{1}, P_{2}, ... P_{n}$ be the p-values of its probes. Under the null hypothesis, $P_{1}, P_{2}, ... P_{n} ~ \overset{i.i.d}{\sim} Unif[0, 1]$. Let $P_{(1)}, P_{(2)}, ... P_{(n)}$ be the order statistics. Define: 
-$$\rho = min\{Pr(P_{(1)}<P_{(1)obs}), Pr(P_{(2)}<P_{(2)obs})..., Pr(P_{(n)}<P_{(n)obs}) \} $$
+For gene $i$, let $P_{1}, P_{2}, ... P_{n}$ be the p-values of its probes. 
+Under the null hypothesis, 
+$P_{1}, P_{2}, ... P_{n} ~ \overset{i.i.d}{\sim} Unif[0, 1]$. 
+Let $P_{(1)}, P_{(2)}, ... P_{(n)}$ be the order statistics. Define: 
+$$\rho = 
+min\{Pr(P_{(1)}<P_{(1)obs}), Pr(P_{(2)}<P_{(2)obs})..., 
+Pr(P_{(n)}<P_{(n)obs}) \} $$
 
-methylRRA supports two approaches to adjust for number of probes, ORA and GSEA [@subramanian2005gene]. In ORA approach, for gene $i$, conversion from $\rho$ score into p-value is done by Bonferroni correction [@kolde2012robust]. We get a p-value for each gene and these p-values are then corrected for multiple testing use Benjamini & Hochberg procedure [@benjamini1995controlling]. Genes satisfy FDR<0.05 are considered DE genes. Then we apply ORA based on these DE genes. 
+methylRRA supports two approaches to adjust for number of probes, ORA and 
+GSEA [@subramanian2005gene]. In ORA approach, for gene $i$, conversion from 
+$\rho$ score into p-value is done by Bonferroni correction [@kolde2012robust]. 
+We get a p-value for each gene and these p-values are then corrected for 
+multiple testing use Benjamini & Hochberg procedure 
+[@benjamini1995controlling]. Genes satisfy FDR<0.05 are considered DE genes. 
+Then we apply ORA based on these DE genes. 
 
-In GSEA approach, for gene $i$, we also convert $\rho$ score into p-value by Bonferroni correction. Then we find the upper tail quantile corresponds to p-value/2. We get a quantile for each gene and rank these quantiles in decreasing order. Then we apply Gene Set Enrichment Analysis (GSEA) on this ordered list.  
+In GSEA approach, for gene $i$, we also convert $\rho$ score into p-value by 
+Bonferroni correction. Then we find the upper tail quantile corresponds to 
+p-value/2. We get a quantile for each gene and rank these quantiles in 
+decreasing order. Then we apply Gene Set Enrichment Analysis (GSEA) on this 
+ordered list.  
 
 ### Example
 
 To apply ORA approach, we use argument `method = "ORA"` in methylRRA
 
 ```{r}
-res2 = methylRRA(cpg.pval = cpg.pval, method = "ORA", minsize = 200, maxsize = 210)
+res2 = methylRRA(cpg.pval = cpg.pval, method = "ORA", 
+                    minsize = 200, maxsize = 210)
 head(res2, 15)
 ```
 
 To apply GSEA approach, we use argument `method = "GSEA"` in methylRRA
 
 ```{r}
-res3 = methylRRA(cpg.pval = cpg.pval, method = "GSEA", minsize = 200, maxsize = 210)
+res3 = methylRRA(cpg.pval = cpg.pval, method = "GSEA", 
+                    minsize = 200, maxsize = 210)
 head(res3, 10)
 ```
 
@@ -117,14 +155,20 @@ head(res3, 10)
 
 ## Description of methylgometh
 
-methylgometh calls `gometh` or `gsameth` function in missMethyl package [@phipson2015missmethyl] to adjust number of probes in gene set testing. `gometh` modifies goseq method [@young2012goseq] by fitting a probability weighting function and resampling from Wallenius non-central hypergeometric distribution. 
+methylgometh calls `gometh` or `gsameth` function in missMethyl 
+package [@phipson2015missmethyl] to adjust number of probes in gene set 
+testing. `gometh` modifies goseq method [@young2012goseq] by fitting a 
+probability weighting function and resampling from Wallenius non-central 
+hypergeometric distribution. 
 
-methylgometh requires two inputs, `cpg.pval` and `sig.cut`. `sig.cut` specifies the cut-off point to call a probe differentially methylated. 
+methylgometh requires two inputs, `cpg.pval` and `sig.cut`. `sig.cut` specifies
+the cut-off point to call a probe differentially methylated. 
 
 ### Example
 
 ```{r}
-res4 = methylgometh(cpg.pval = cpg.pval, sig.cut = 0.001, minsize = 200, maxsize = 210)
+res4 = methylgometh(cpg.pval = cpg.pval, sig.cut = 0.001, 
+                        minsize = 200, maxsize = 210)
 head(res4, 15)
 ```
 
@@ -133,19 +177,28 @@ head(res4, 15)
 
 methylGO provides many other options for users to customize the analysis. 
 
-* `array.type` is to specify which array type to use. It is either "450K" or "EPIC". Default is "450K".
-* `GS.list` is user input gene sets to be tested. It should be a list with entry names gene sets IDs and elements correpond to genes that gene sets contain. If there is no input list, Gene Ontology is used.
-* `GS.idtype` is the type of gene ID in user input gene sets. If `GS.list` is not empty, then the user is expected to provide gene ID type. Supported ID types are "SYMBOL", "ENSEMBL", "ENTREZID", "REFSEQ". Default is "SYMBOL". 
-* `GS.type` is the published gene sets/pathways to be tested if `GS.list` is empty. Supported pathways are "GO", "KEGG", and "Reactome". Default is "GO".
-* `minsize` is an integer. If the number of genes in a gene set is less than this integer, this gene set is not tested. Default is 100.
-* `maxsize` is also an integer. If the number of genes in a gene set is greater than this integer, this gene set is not tested. Default is 500.
-* In methylRRA, `method` is to specify gene set test method. It is either "ORA" or "GSEA" as described above. 
+* `array.type` is to specify which array type to use. It is either "450K" or 
+"EPIC". Default is "450K".
+* `GS.list` is user input gene sets to be tested. It should be a list with 
+entry names gene sets IDs and elements correpond to genes that gene sets 
+contain. If there is no input list, Gene Ontology is used.
+* `GS.idtype` is the type of gene ID in user input gene sets. If `GS.list` is 
+not empty, then the user is expected to provide gene ID type. Supported ID 
+types are "SYMBOL", "ENSEMBL", "ENTREZID", "REFSEQ". Default is "SYMBOL". 
+* `GS.type` is the published gene sets/pathways to be tested if `GS.list` is 
+empty. Supported pathways are "GO", "KEGG", and "Reactome". Default is "GO".
+* `minsize` is an integer. If the number of genes in a gene set is less than 
+this integer, this gene set is not tested. Default is 100.
+* `maxsize` is also an integer. If the number of genes in a gene set is 
+greater than this integer, this gene set is not tested. Default is 500.
+* In methylRRA, `method` is to specify gene set test method. It is either 
+"ORA" or "GSEA" as described above. 
 
 ### Example
 
 Here an example of user input gene sets. The gene ID type is gene symbol. 
 ```{r}
-#data(GS.list)
+data(GSlisttoy)
 ## to make the display compact, only a proportion of each gene set is shown
 head(lapply(GS.list, function(x) return(x[1:30])), 3)   
 ```
@@ -154,14 +207,17 @@ Test these gene sets using "ORA" in methylRRA
 
 ```{r}
 GS.list = GS.list[1:30]
-res5 = methylRRA(cpg.pval = cpg.pval, array.type = "450K", method = "ORA", GS.list = GS.list, GS.idtype = "SYMBOL", minsize = 100, maxsize = 300)
+res5 = methylRRA(cpg.pval = cpg.pval, array.type = "450K", method = "ORA", 
+                    GS.list = GS.list, GS.idtype = "SYMBOL", 
+                    minsize = 100, maxsize = 300)
 head(res5, 10)
 ```
 
 Here is another example. Test Reactome pathways using methylglm
 
 ```{r}
-res6 = methylglm(cpg.pval = cpg.pval, array.type = "450K", GS.type = "Reactome", minsize = 100, maxsize = 110)
+res6 = methylglm(cpg.pval = cpg.pval, array.type = "450K", 
+                    GS.type = "Reactome", minsize = 100, maxsize = 110)
 head(res6, 10)
 ```
 

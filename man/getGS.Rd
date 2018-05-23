@@ -12,13 +12,16 @@ getGS(geneids, GS.type)
 \item{GS.type}{A string. "GO", "KEGG", or "Reactome".}
 }
 \value{
-A list contains all gene sets of interest and their corresponding genes.
+A list contains all gene sets of
+interest and their corresponding genes.
 }
 \description{
 This function gets gene sets information.
 }
 \references{
-Carlson M (2017). org.Hs.eg.db: Genome wide annotation for Human. R package version 3.5.0.
+Carlson M (2017). org.Hs.eg.db:
+Genome wide annotation for Human. R package version 3.5.0.
 
-Ligtenberg W (2017). reactome.db: A set of annotation maps for reactome. R package version 1.62.0.
+Ligtenberg W (2017). reactome.db:
+A set of annotation maps for reactome. R package version 1.62.0.
 }

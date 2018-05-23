@@ -16,12 +16,18 @@ A data frame contains CpG IDs and gene symbols.
 This function gets CpG IDs and their corresponding gene symbols.
 }
 \details{
-The implementation of the function is modified from .flattenAnn function in missMethyl package.
+The implementation of the function is modified
+from .flattenAnn function in missMethyl package.
 }
 \references{
-Hansen KD (2016). IlluminaHumanMethylation450kanno.ilmn12.hg19: Annotation for Illumina's 450k methylation arrays. R package version 0.6.0.
+Hansen KD (2016). IlluminaHumanMethylation450kanno.ilmn12.hg19:
+Annotation for Illumina's 450k methylation arrays. R package version 0.6.0.
 
-Hansen KD (2017). IlluminaHumanMethylationEPICanno.ilm10b3.hg19: Annotation for Illumina's EPIC methylation arrays. R package version 0.6.0, https://bitbucket.com/kasperdanielhansen/Illumina_EPIC.
+Hansen KD (2017). IlluminaHumanMethylationEPICanno.ilm10b3.hg19:
+Annotation for Illumina's EPIC methylation arrays. R package version 0.6.0,
+https://bitbucket.com/kasperdanielhansen/Illumina_EPIC.
 
-Phipson B, Maksimovic J and Oshlack A (2015). “missMethyl: an R package for analysing methylation data from Illuminas HumanMethylation450 platform.” Bioinformatics, pp. btv560.
+Phipson B, Maksimovic J and Oshlack A (2015).
+“missMethyl: an R package for analysing methylation data from
+Illuminas HumanMethylation450 platform.” Bioinformatics, pp. btv560.
 }

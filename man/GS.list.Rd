@@ -4,7 +4,8 @@
 \name{GS.list}
 \alias{GS.list}
 \title{An example of user input gene sets}
-\format{A list contains user input gene set names and their corresponding genes}
+\format{A list contains user input gene set
+names and their corresponding genes}
 \usage{
 GS.list
 }

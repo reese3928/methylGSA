@@ -2,44 +2,59 @@
 % Please edit documentation in R/methylglm.R
 \name{methylglm}
 \alias{methylglm}
-\title{Implement logistic regression adjusting for number of probes in enrichment analysis}
+\title{Implement logistic regression adjusting
+for number of probes in enrichment analysis}
 \usage{
 methylglm(cpg.pval, array.type = "450K", GS.list = NULL,
-  GS.idtype = "SYMBOL", GS.type = "GO", minsize = 100, maxsize = 500)
+    GS.idtype = "SYMBOL", GS.type = "GO", minsize = 100, maxsize = 500)
 }
 \arguments{
-\item{cpg.pval}{A named vector containing p-values of differential methylation test. Names should be CpG IDs.}
+\item{cpg.pval}{A named vector containing p-values of differential
+methylation test. Names should be CpG IDs.}
 
 \item{array.type}{A string. Either "450K" or "EPIC". Default is "450K".}
 
-\item{GS.list}{A list. Default is NULL. If there is no input list, Gene Ontology is used. Entry names are gene sets names, and elements correpond to genes that gene sets contain.}
+\item{GS.list}{A list. Default is NULL. If there is no input list,
+Gene Ontology is used. Entry names are gene sets names, and elements
+correpond to genes that gene sets contain.}
 
-\item{GS.idtype}{A string. "SYMBOL", "ENSEMBL", "ENTREZID" or "REFSEQ". Default is "SYMBOL"}
+\item{GS.idtype}{A string. "SYMBOL", "ENSEMBL", "ENTREZID" or "REFSEQ".
+Default is "SYMBOL"}
 
 \item{GS.type}{A string. "GO", "KEGG", or "Reactome". Default is "GO"}
 
-\item{minsize}{An integer. If the number of genes in a gene set is less than this integer, this gene set is not tested. Default is 100.}
+\item{minsize}{An integer. If the number of genes in a gene set is
+less than this integer, this gene set is not tested. Default is 100.}
 
-\item{maxsize}{An integer. If the number of genes in a gene set is greater than this integer, this gene set is not tested. Default is 500.}
+\item{maxsize}{An integer. If the number of genes in a gene set is greater
+than this integer, this gene set is not tested. Default is 500.}
 }
 \value{
 A data frame contains gene set tests results.
 }
 \description{
-This function implements logistic regression adjusting for number of probes in enrichment analysis.
+This function implements logistic regression adjusting
+for number of probes in enrichment analysis.
 }
 \details{
-The implementation of this function is modified from goglm function in GOglm package.
+The implementation of this function is modified from goglm
+function in GOglm package.
 }
 \examples{
 library(IlluminaHumanMethylation450kanno.ilmn12.hg19)
-res = methylglm(cpg.pval = cpg.pval, minsize = 200, maxsize = 220)
+data(cpgtoy)
+res = methylglm(cpg.pval = cpg.pval, minsize = 200, maxsize = 210)
 head(res, 15)
 }
 \references{
-Mi G, Di Y, Emerson S, Cumbie JS and Chang JH (2012) Length bias correction in Gene Ontology enrichment analysis using logistic regression. PLOS ONE, 7(10): e46128
+Mi G, Di Y, Emerson S, Cumbie JS and Chang JH (2012)
+Length bias correction in Gene Ontology enrichment analysis using
+logistic regression. PLOS ONE, 7(10): e46128
 
-Phipson, B., Maksimovic, J., and Oshlack, A. (2015). missMethyl: an R package for analysing methylation data from Illuminas HumanMethylation450 platform. Bioinformatics, btv560.
+Phipson, B., Maksimovic, J., and Oshlack, A. (2015).
+missMethyl: an R package for analysing methylation data from Illuminas
+HumanMethylation450 platform. Bioinformatics, btv560.
 
-Carlson M (2017). org.Hs.eg.db: Genome wide annotation for Human. R package version 3.5.0.
+Carlson M (2017). org.Hs.eg.db: Genome wide annotation for
+Human. R package version 3.5.0.
 }
