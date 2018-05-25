@@ -6,22 +6,12 @@ output:
     rmarkdown::html_document:
         highlight: pygments
         toc: true
-
 vignette: >
-    %\VignetteIndexEntry{methylGO: 
-        Gene Set Analysis for DNA Methylation Datasets}
+    %\VignetteIndexEntry{methylGO: Gene Set Analysis for DNA Methylation Datasets}
     %\VignetteEngine{knitr::rmarkdown}
     %\VignetteEncoding{UTF-8}
-bibliography: library.bib
 ---
 
-<style type="text/css">
-
-body{ /* Normal  */
-    font-size: 15px;
-}
-
-</style>
 
 ```{r, echo = FALSE}
 knitr::opts_chunk$set(comment = "", message=FALSE, warning = FALSE)
@@ -31,7 +21,7 @@ knitr::opts_chunk$set(comment = "", message=FALSE, warning = FALSE)
 
 The methylGO package contains functions to carry out gene set analysis 
 adjusting for the number of probes of each gene. It has been shown by 
-[@geeleher2013gene] that gene set analysis is extremely biased for DNA 
+Geeleher et al [1] that gene set analysis is extremely biased for DNA 
 methylation data. This package contains three functions to adjust for the 
 bias in gene set analysis. 
 
@@ -39,13 +29,13 @@ bias in gene set analysis.
 logistic regression. 
 
 * methylRRA: Adjusting for multiple p-values of each gene by Robust 
-Rank Aggregation [@kolde2012robust], and then apply either 
+Rank Aggregation [2], and then apply either 
 over-representation analysis (ORA) or Gene Set Enrichment 
-Analysis (GSEA) [@subramanian2005gene] in gene set testing. 
+Analysis (GSEA) [3] in gene set testing. 
 
 * methylgometh: Adjusting the number of probes for each gene by 
 weighted resampling and Wallenius non-central hypergeometric approximation. 
-(via missMethyl [@phipson2015missmethyl])
+(via missMethyl [4])
 
 ## Supported gene sets/pathways and gene ID types
 
@@ -60,12 +50,12 @@ weighted resampling and Wallenius non-central hypergeometric approximation.
     
 ## Supported array types
 
-* "450K" (via [@hansen2016illuminahumanmethylation450kanno])
-* "EPIC" (via [@hansen2017illuminahumanmethylationepic])
+* "450K" (via [5])
+* "EPIC" (via [6])
 
 ## Description of methylglm
 
-methylglm is an extention of GOglm [@mi2012length]. GOglm adjusts 
+methylglm is an extention of GOglm [7]. GOglm adjusts 
 length bias for RNA-Seq data by incorporating gene length as a covariate 
 in logistic regression model. We adjust length bias in DNA methylation by 
 the number of probes instead of gene length. For each gene set, we fit a 
@@ -105,7 +95,7 @@ Result is a data frame ranked by pvalues of gene sets.
 
 ## Description of methylRRA
 
-Robust rank aggregation[@kolde2012robust] is a parameter free model that 
+Robust rank aggregation [2] is a parameter free model that 
 aggregates several ranked gene lists into a single gene list. The aggregation 
 assumes random order of input lists and assign each gene a p-value based on 
 order statistics. We apply this order statistics idea to adjust for number 
@@ -120,11 +110,11 @@ min\{Pr(P_{(1)}<P_{(1)obs}), Pr(P_{(2)}<P_{(2)obs})...,
 Pr(P_{(n)}<P_{(n)obs}) \} $$
 
 methylRRA supports two approaches to adjust for number of probes, ORA and 
-GSEA [@subramanian2005gene]. In ORA approach, for gene $i$, conversion from 
-$\rho$ score into p-value is done by Bonferroni correction [@kolde2012robust]. 
+GSEA [3]. In ORA approach, for gene $i$, conversion from 
+$\rho$ score into p-value is done by Bonferroni correction [2]. 
 We get a p-value for each gene and these p-values are then corrected for 
 multiple testing use Benjamini & Hochberg procedure 
-[@benjamini1995controlling]. Genes satisfy FDR<0.05 are considered DE genes. 
+[8]. Genes satisfy FDR<0.05 are considered DE genes. 
 Then we apply ORA based on these DE genes. 
 
 In GSEA approach, for gene $i$, we also convert $\rho$ score into p-value by 
@@ -156,8 +146,8 @@ head(res3, 10)
 ## Description of methylgometh
 
 methylgometh calls `gometh` or `gsameth` function in missMethyl 
-package [@phipson2015missmethyl] to adjust number of probes in gene set 
-testing. `gometh` modifies goseq method [@young2012goseq] by fitting a 
+package [4] to adjust number of probes in gene set 
+testing. `gometh` modifies goseq method [9] by fitting a 
 probability weighting function and resampling from Wallenius non-central 
 hypergeometric distribution. 
 
@@ -223,3 +213,40 @@ head(res6, 10)
 
 
 ## References
+[1] Geeleher, Paul, Lori Hartnett, Laurance J Egan, Aaron Golden, 
+Raja Affendi Raja Ali, and Cathal Seoighe. 2013. Gene-Set Analysis Is 
+Severely Biased When Applied to Genome-Wide Methylation Data.
+Bioinformatics 29 (15). Oxford University Press: 1851–7.
+
+[2] Kolde, Raivo, Sven Laur, Priit Adler, and Jaak Vilo. 2012. 
+Robust Rank Aggregation for Gene List Integration and Meta-Analysis. 
+Bioinformatics 28 (4). Oxford University Press: 573–80.
+
+[3] Subramanian, Aravind, Pablo Tamayo, Vamsi K Mootha, Sayan Mukherjee, 
+Benjamin L Ebert, Michael A Gillette, Amanda Paulovich, et al. 2005. 
+Gene Set Enrichment Analysis: A Knowledge-Based Approach for Interpreting 
+Genome-Wide Expression Profiles. Proceedings of the National Academy of 
+Sciences 102 (43). National Acad Sciences: 15545–50.
+
+[4] Phipson, Belinda, Jovana Maksimovic, and Alicia Oshlack. 2015. 
+MissMethyl: An R Package for Analyzing Data from Illumina's Humanmethylation450 
+Platform. Bioinformatics 32 (2). Oxford University Press: 286–88.
+
+[5] Hansen, KD. 2016a. IlluminaHumanMethylation450kanno.ilmn12.hg19: 
+Annotation for Illumina’s 450k Methylation Arrays. R Package, Version 0.6.0 1.
+
+[6] ———. 2016b. IlluminaHumanMethylationEPICanno.ilm10b2.hg19: 
+Annotation for Illumina’s Epic Methylation Arrays. R Package, Version 0.6.0 1.
+
+[7] Mi, Gu, Yanming Di, Sarah Emerson, Jason S Cumbie, and Jeff H Chang. 2012. 
+Length Bias Correction in Gene Ontology Enrichment Analysis Using 
+Logistic Regression. PloS One 7 (10). Public Library of Science: e46128.
+
+[8] Benjamini, Yoav, and Yosef Hochberg. 1995. Controlling the False 
+Discovery Rate: A Practical and Powerful Approach to Multiple Testing.
+Journal of the Royal Statistical Society. Series B (Methodological). 
+JSTOR, 289–300.
+
+[9] Young, Matthew D, Matthew J Wakefield, Gordon K Smyth, and Alicia 
+Oshlack. 2012. Goseq: Gene Ontology Testing for Rna-Seq Datasets.
+R Bioconductor.

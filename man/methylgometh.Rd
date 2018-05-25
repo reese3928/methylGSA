@@ -42,7 +42,7 @@ in missMethyl package to adjust number of probes in gene set testing
 library(IlluminaHumanMethylation450kanno.ilmn12.hg19)
 data(cpgtoy)
 res = methylgometh(cpg.pval = cpg.pval, sig.cut = 0.001,
-    minsize = 200, maxsize = 210)
+minsize = 200, maxsize = 210)
 head(res, 15)
 }
 \references{
@@ -59,7 +59,7 @@ for Human. R package version 3.5.0.
 Hansen KD (2016). IlluminaHumanMethylation450kanno.ilmn12.hg19:
 Annotation for Illumina's 450k methylation arrays. R package version 0.6.0.
 
-Hansen KD (2017). IlluminaHumanMethylationEPICanno.ilm10b3.hg19:
+Hansen KD (2016). IlluminaHumanMethylationEPICanno.ilm10b2.hg19:
 Annotation for Illumina's EPIC methylation arrays. R package version 0.6.0,
 https://bitbucket.com/kasperdanielhansen/Illumina_EPIC.
 }

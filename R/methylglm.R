@@ -21,7 +21,7 @@
 #' @export
 #' @import stats
 #' @import org.Hs.eg.db
-#' @import AnnotationDbi
+#' @importFrom AnnotationDbi select
 #' @return A data frame contains gene set tests results.
 #' @references Mi G, Di Y, Emerson S, Cumbie JS and Chang JH (2012)
 #' Length bias correction in Gene Ontology enrichment analysis using

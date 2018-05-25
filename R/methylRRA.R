@@ -20,9 +20,9 @@
 #' @export
 #' @import stats
 #' @import RobustRankAggreg
-#' @import clusterProfiler
+#' @importFrom clusterProfiler GSEA
 #' @import org.Hs.eg.db
-#' @import AnnotationDbi
+#' @importFrom AnnotationDbi select
 #' @return A data frame contains gene set tests results.
 #' @references Kolde, Raivo, et al. Robust rank aggregation for gene
 #' list integration and meta-analysis. Bioinformatics 28.4 (2012): 573-580.

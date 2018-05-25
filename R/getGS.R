@@ -5,7 +5,7 @@
 #' @param GS.type A string. "GO", "KEGG", or "Reactome".
 #' @import org.Hs.eg.db
 #' @import reactome.db
-#' @import AnnotationDbi
+#' @importFrom AnnotationDbi select
 #' @return A list contains all gene sets of
 #' interest and their corresponding genes.
 #' @references Carlson M (2017). org.Hs.eg.db:

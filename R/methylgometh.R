@@ -19,14 +19,15 @@
 #' is greater than this integer, this gene set is not tested. Default is 500.
 #' @export
 #' @import stats
-#' @import missMethyl
-#' @import minfi
+#' @importFrom missMethyl gometh
+#' @importFrom missMethyl gsameth
+#' @importFrom minfi getAnnotation
 #' @import reactome.db
-#' @import AnnotationDbi
+#' @importFrom AnnotationDbi select
 #' @import org.Hs.eg.db
-#' @import stringr
+#' @importFrom stringr str_length
 #' @import IlluminaHumanMethylation450kanno.ilmn12.hg19
-#' @import IlluminaHumanMethylationEPICanno.ilm10b3.hg19
+#' @import IlluminaHumanMethylationEPICanno.ilm10b2.hg19
 #' @return A data frame contains gene set tests results.
 #' @references Phipson, B., Maksimovic, J., and Oshlack, A. (2015).
 #' missMethyl: an R package for analysing methylation data from Illuminas
@@ -37,9 +38,9 @@
 #' for Human. R package version 3.5.0.
 #' @references Hansen KD (2016). IlluminaHumanMethylation450kanno.ilmn12.hg19:
 #' Annotation for Illumina's 450k methylation arrays. R package version 0.6.0.
-#' @references Hansen KD (2017). IlluminaHumanMethylationEPICanno.ilm10b3.hg19:
+#' @references Hansen KD (2016). IlluminaHumanMethylationEPICanno.ilm10b2.hg19:
 #' Annotation for Illumina's EPIC methylation arrays. R package version 0.6.0,
-#'  https://bitbucket.com/kasperdanielhansen/Illumina_EPIC.
+#' https://bitbucket.com/kasperdanielhansen/Illumina_EPIC.
 #' @examples
 #' library(IlluminaHumanMethylation450kanno.ilmn12.hg19)
 #' data(cpgtoy)
@@ -82,8 +83,8 @@ methylgometh <- function(cpg.pval, sig.cut, array.type = "450K",
                     IlluminaHumanMethylation450kanno.ilmn12.hg19)
         else
             FullAnnot = getAnnotation(
-                IlluminaHumanMethylationEPICanno.ilm10b3.hg19::
-                    IlluminaHumanMethylationEPICanno.ilm10b3.hg19)
+                IlluminaHumanMethylationEPICanno.ilm10b2.hg19::
+                    IlluminaHumanMethylationEPICanno.ilm10b2.hg19)
 
         FullAnnot = FullAnnot[,c("Name","UCSC_RefGene_Name")]
         FullAnnot = FullAnnot[str_length(rownames(FullAnnot))==10,]
