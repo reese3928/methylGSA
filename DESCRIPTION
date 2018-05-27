@@ -1,7 +1,7 @@
 Package: methylGO
 Type: Package
 Title: methylGO: Gene Set Analysis Using the Outcome of Differential Methylation
-Version: 0.99.5
+Version: 0.99.6
 Author: Pei Fen Kuan and Xu Ren
 Maintainer: Xu Ren <xuren2120@gmail.com>
 Description: The main functions for methylGO are methylglm and methylRRA.
@@ -12,11 +12,11 @@ Encoding: UTF-8
 Imports:
   RobustRankAggreg,stringr,stats,minfi,clusterProfiler,missMethyl,org.Hs.eg.db,reactome.db,AnnotationDbi,IlluminaHumanMethylation450kanno.ilmn12.hg19,IlluminaHumanMethylationEPICanno.ilm10b2.hg19
 Depends:
-  R (>= 3.5)
+  R (>= 3.4)
 Suggests:
   knitr,
     rmarkdown
 License: GPL-2
 RoxygenNote: 6.0.1
-VignetteBuilder: knitr,rmarkdown
+VignetteBuilder: knitr
 biocViews: DNAMethylation,DifferentialMethylation,GeneSetEnrichment,Regression

@@ -6,7 +6,7 @@
 using gometh or gsameth in missMethyl}
 \usage{
 methylgometh(cpg.pval, sig.cut, array.type = "450K", GS.list = NULL,
-    GS.idtype = "SYMBOL", GS.type = "GO", minsize = 100, maxsize = 500)
+	GS.idtype = "SYMBOL", GS.type = "GO", minsize = 100, maxsize = 500)
 }
 \arguments{
 \item{cpg.pval}{A named vector containing p-values of
@@ -41,9 +41,9 @@ in missMethyl package to adjust number of probes in gene set testing
 \examples{
 library(IlluminaHumanMethylation450kanno.ilmn12.hg19)
 data(cpgtoy)
-res = methylgometh(cpg.pval = cpg.pval, sig.cut = 0.001,
-minsize = 200, maxsize = 210)
-head(res, 15)
+res = methylgometh(cpg.pval = cpg.pval, sig.cut = 0.001, GS.type = "KEGG",
+minsize = 200, maxsize = 205)
+head(res)
 }
 \references{
 Phipson, B., Maksimovic, J., and Oshlack, A. (2015).

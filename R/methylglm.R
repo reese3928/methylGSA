@@ -34,8 +34,11 @@
 #' @examples
 #' library(IlluminaHumanMethylation450kanno.ilmn12.hg19)
 #' data(cpgtoy)
-#' res = methylglm(cpg.pval = cpg.pval, minsize = 200, maxsize = 210)
-#' head(res, 15)
+#' data(GSlisttoy)
+#' GS.list = GS.list[1:10]
+#' res = methylglm(cpg.pval = cpg.pval, GS.list = GS.list,
+#' GS.idtype = "SYMBOL", minsize = 100, maxsize = 300)
+#' head(res)
 
 methylglm <- function(cpg.pval, array.type = "450K", GS.list=NULL,
                             GS.idtype = "SYMBOL", GS.type = "GO",

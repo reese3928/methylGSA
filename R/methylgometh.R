@@ -44,9 +44,10 @@
 #' @examples
 #' library(IlluminaHumanMethylation450kanno.ilmn12.hg19)
 #' data(cpgtoy)
-#' res = methylgometh(cpg.pval = cpg.pval, sig.cut = 0.001,
-#' minsize = 200, maxsize = 210)
-#' head(res, 15)
+#' res = methylgometh(cpg.pval = cpg.pval, sig.cut = 0.001, GS.type = "KEGG",
+#' minsize = 200, maxsize = 205)
+#' head(res)
+
 
 methylgometh <- function(cpg.pval, sig.cut, array.type = "450K",
                                 GS.list=NULL, GS.idtype = "SYMBOL",

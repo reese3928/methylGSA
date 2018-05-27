@@ -6,7 +6,7 @@
 each gene by Robust Rank Aggregation}
 \usage{
 methylRRA(cpg.pval, array.type = "450K", method = "ORA", GS.list = NULL,
-    GS.idtype = "SYMBOL", GS.type = "GO", minsize = 100, maxsize = 500)
+	GS.idtype = "SYMBOL", GS.type = "GO", minsize = 100, maxsize = 500)
 }
 \arguments{
 \item{cpg.pval}{A named vector containing p-values of differential
@@ -41,9 +41,10 @@ multiple p-values of each gene by Robust Rank Aggregation.
 \examples{
 library(IlluminaHumanMethylation450kanno.ilmn12.hg19)
 data(cpgtoy)
-res1 = methylRRA(cpg.pval = cpg.pval, method = "ORA",
-minsize = 200, maxsize = 210)
-head(res1, 15)
+data(GSlisttoy)
+GS.list = GS.list[1:10]
+res1 = methylRRA(cpg.pval = cpg.pval, method = "ORA", GS.list = GS.list)
+head(res1)
 }
 \references{
 Kolde, Raivo, et al. Robust rank aggregation for gene
