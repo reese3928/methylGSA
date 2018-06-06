@@ -14,47 +14,35 @@
 #' A set of annotation maps for reactome. R package version 1.62.0.
 
 getGS = function(geneids, GS.type){
-    cat(paste("retrieving", GS.type, "sets...\n"))
-    if(GS.type == "GO"){
-        GOs = suppressMessages(
-            na.omit(unique(
-                select(org.Hs.eg.db, geneids, "GO",keytype = "SYMBOL")$GO)))
-        GOdf = suppressMessages(
-            select(org.Hs.eg.db, GOs, "SYMBOL", keytype = "GO"))
-        genesymbol = GOdf$SYMBOL
-        names(genesymbol) = GOdf$GO
-        GO.list = split(genesymbol, names(genesymbol))
-        return(GO.list)
-    }
-
-    if(GS.type == "KEGG"){
-        KEGGs = suppressMessages(
-            na.omit(unique(
-                select(org.Hs.eg.db, geneids, "PATH",keytype = "SYMBOL")$PATH)))
-        KEGGdf = suppressMessages(
-            select(org.Hs.eg.db, KEGGs, "SYMBOL", keytype = "PATH"))
-        genesymbol = KEGGdf$SYMBOL
-        names(genesymbol) = KEGGdf$PATH
-        KEGG.list = split(genesymbol, names(genesymbol))
-        return(KEGG.list)
-    }
-
+    message("retrieving", GS.type, "sets...")
+    if(GS.type == "KEGG")
+        GS.type = "PATH"
     if(GS.type == "Reactome"){
+        ## first convert id to entrezid to use reactome.db
         gene.entrez = suppressMessages(
             select(org.Hs.eg.db, geneids,
-                        columns = "ENTREZID",keytype = "SYMBOL")$ENTREZID)
-        reactome.df = suppressMessages(
+                   columns = "ENTREZID",keytype = "SYMBOL")$ENTREZID)
+        GOdf = suppressMessages(
             select(reactome.db, gene.entrez,
-                        columns = "REACTOMEID", keytype = "ENTREZID"))
-        reactom2symbol = suppressMessages(
-            select(org.Hs.eg.db, reactome.df$ENTREZID,
-                        columns = "SYMBOL", keytype = "ENTREZID")$SYMBOL)
-        names(reactom2symbol) = reactome.df$REACTOMEID
-        reactome.list = split(reactom2symbol, names(reactom2symbol))
-        return(reactome.list)
+                   columns = "REACTOMEID", keytype = "ENTREZID"))
+        genesymbol = suppressMessages(
+            select(org.Hs.eg.db, GOdf$ENTREZID,
+                   columns = "SYMBOL", keytype = "ENTREZID")$SYMBOL)
+        GS.type = "REACTOMEID"
+
     }
+    else{
+        GOs = suppressMessages(
+            na.omit(unique(
+                select(org.Hs.eg.db, geneids,
+                       GS.type,keytype = "SYMBOL")[,GS.type])))
+        GOdf = suppressMessages(
+            select(org.Hs.eg.db, GOs, "SYMBOL", keytype = GS.type))
+        genesymbol = GOdf$SYMBOL
+    }
+    names(genesymbol) = GOdf[,GS.type]
+    GO.list = split(genesymbol, names(genesymbol))
+    return(GO.list)
 }
-
-
 
 

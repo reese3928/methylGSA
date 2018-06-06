@@ -44,24 +44,23 @@ methylglm <- function(cpg.pval, array.type = "450K", GS.list=NULL,
                             GS.idtype = "SYMBOL", GS.type = "GO",
                             minsize = 100, maxsize = 500){
     if(!is.vector(cpg.pval) | !is.numeric(cpg.pval) | is.null(names(cpg.pval)))
-        stop("Input CpG pvalues should be a named vector\n")
+        stop("Input CpG pvalues should be a named vector")
     if(sum(cpg.pval==0)>0)
-        stop("Input CpG pvalues should not contain 0\n")
+        stop("Input CpG pvalues should not contain 0")
     if(!is.list(GS.list)&!is.null(GS.list))
-        stop("Input gene sets should be a list\n")
+        stop("Input gene sets should be a list")
 
     GS.idtype = match.arg(
         GS.idtype,c("SYMBOL", "ENSEMBL", "ENTREZID", "REFSEQ"))
     if(!is.null(GS.list) & GS.idtype!="SYMBOL")
         GS.list = suppressMessages(
             lapply(GS.list, function(x)
-                return(select(
-                    org.Hs.eg.db, x, columns = "SYMBOL",
-                        keytype = GS.idtype)$SYMBOL )) )
+                select(org.Hs.eg.db, x, columns = "SYMBOL",
+                            keytype = GS.idtype)$SYMBOL))
     GS.type = match.arg(GS.type, c("GO", "KEGG", "Reactome"))
 
     if(array.type!="450K" & array.type!="EPIC")
-        stop("Input array type should be either 450K or EPIC\n")
+        stop("Input array type should be either 450K or EPIC")
     if(array.type=="450K")
         FullAnnot = getAnnot("450K")
     else
@@ -76,39 +75,39 @@ methylglm <- function(cpg.pval, array.type = "450K", GS.list=NULL,
     geneID.list = split(cpg.pval, names(cpg.pval))
     ## convert cpg.pval to a list, each element of this
     #list is a gene and it's corresponding cpg pvalue
-    gene.pval = unlist(lapply(geneID.list, min))
+    gene.pval = vapply(geneID.list, min, FUN.VALUE = 1)
     ## for each gene, take the minimum p-value
-    probes = unlist(lapply(geneID.list, length))
+    probes = vapply(geneID.list, length, FUN.VALUE = 1)
     ## get number of probes for each gene
 
     if(is.null(GS.list))
         GS.list = getGS(names(geneID.list), GS.type = GS.type)
     GS.list = lapply(GS.list, na.omit)
 
-    GS.sizes = unlist(lapply(GS.list, length))
+    GS.sizes = vapply(GS.list, length, FUN.VALUE = 1)
     GS.list.sub = GS.list[GS.sizes>=minsize & GS.sizes<=maxsize]
     ## filter gene sets by their sizes
-    cat(length(GS.list.sub), "gene sets are being tested...\n")
+    message(length(GS.list.sub), " gene sets are being tested...")
 
     gs.pval = rep(NA, length(GS.list.sub))
     for(i in seq_along(GS.list.sub)){
         y = as.numeric(names(gene.pval)%in%GS.list.sub[[i]])
         df = data.frame(NegLogP = -log(gene.pval), probes = log(probes), y = y)
         glm.fit = glm(y ~ NegLogP + probes, family = "quasibinomial",
-                            data = df, control = list(maxit = 100))
+                            data = df, control = list(maxit = 25))
         sumry = summary(glm.fit)
         gs.pval[i] =
             sign(coefficients(glm.fit)[[2]])*sumry$coef[ ,"Pr(>|t|)"][[2]]
     }
     gs.pval[gs.pval<=0] = 1
     ID = names(GS.list.sub)
-    size = unlist(lapply(GS.list.sub, length))
+    size = vapply(GS.list.sub, length, FUN.VALUE = 1)
 
     gs.padj = p.adjust(gs.pval, method = "BH")
     res = data.frame(ID = ID, size = size, pvalue = gs.pval, padj = gs.padj)
     rownames(res) = ID
     res = res[order(res$pvalue), ]
-    cat("Done!\n")
+    message("Done!")
     return(res)
 }
 

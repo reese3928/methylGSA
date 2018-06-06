@@ -1,21 +1,36 @@
-Package: methylGO
+Package: methylGSA
 Type: Package
-Title: methylGO: Gene Set Analysis Using the Outcome of Differential Methylation
-Version: 0.99.6
-Author: Pei Fen Kuan and Xu Ren
-Maintainer: Xu Ren <xuren2120@gmail.com>
-Description: The main functions for methylGO are methylglm and methylRRA.
-    methylGO implements logistic regression adjusting number of probes as a covariate.
+Title: methylGSA: Gene Set Analysis Using the Outcome of Differential Methylation
+Version: 0.99.7
+Authors@R: c(
+    person("Pei Fen", "Kuan", 
+        email = "peifen.kuan@stonybrook.edu", role = "aut"),
+    person("Xu", "Ren", 
+        email = "xuren2120@gmail.com", role = c("aut", "cre")))
+Description: The main functions for methylGSA are methylglm and methylRRA.
+    methylGSA implements logistic regression adjusting number of probes as 
+    a covariate.
     methylRRA adjusts multiple p-values of each gene by Robust Rank Aggregation.
     For more detailed help information, please see the vignette.
 Encoding: UTF-8
 Imports:
-  RobustRankAggreg,stringr,stats,minfi,clusterProfiler,missMethyl,org.Hs.eg.db,reactome.db,AnnotationDbi,IlluminaHumanMethylation450kanno.ilmn12.hg19,IlluminaHumanMethylationEPICanno.ilm10b2.hg19
+    RobustRankAggreg,
+    stringr,
+    stats,
+    minfi,
+    clusterProfiler,
+    missMethyl,
+    org.Hs.eg.db,
+    reactome.db,
+    AnnotationDbi,
+    IlluminaHumanMethylation450kanno.ilmn12.hg19,
+    IlluminaHumanMethylationEPICanno.ilm10b2.hg19
 Depends:
-  R (>= 3.4)
+    R (>= 3.5)
 Suggests:
-  knitr,
-    rmarkdown
+    knitr,
+    rmarkdown,
+    testthat
 License: GPL-2
 RoxygenNote: 6.0.1
 VignetteBuilder: knitr

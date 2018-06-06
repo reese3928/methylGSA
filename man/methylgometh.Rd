@@ -6,7 +6,7 @@
 using gometh or gsameth in missMethyl}
 \usage{
 methylgometh(cpg.pval, sig.cut, array.type = "450K", GS.list = NULL,
-	GS.idtype = "SYMBOL", GS.type = "GO", minsize = 100, maxsize = 500)
+    GS.idtype = "SYMBOL", GS.type = "GO", minsize = 100, maxsize = 500)
 }
 \arguments{
 \item{cpg.pval}{A named vector containing p-values of
@@ -55,11 +55,4 @@ for reactome. R package version 1.62.0.
 
 Carlson M (2017). org.Hs.eg.db: Genome wide annotation
 for Human. R package version 3.5.0.
-
-Hansen KD (2016). IlluminaHumanMethylation450kanno.ilmn12.hg19:
-Annotation for Illumina's 450k methylation arrays. R package version 0.6.0.
-
-Hansen KD (2016). IlluminaHumanMethylationEPICanno.ilm10b2.hg19:
-Annotation for Illumina's EPIC methylation arrays. R package version 0.6.0,
-https://bitbucket.com/kasperdanielhansen/Illumina_EPIC.
 }

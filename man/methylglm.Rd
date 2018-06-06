@@ -6,7 +6,7 @@
 for number of probes in enrichment analysis}
 \usage{
 methylglm(cpg.pval, array.type = "450K", GS.list = NULL,
-	GS.idtype = "SYMBOL", GS.type = "GO", minsize = 100, maxsize = 500)
+    GS.idtype = "SYMBOL", GS.type = "GO", minsize = 100, maxsize = 500)
 }
 \arguments{
 \item{cpg.pval}{A named vector containing p-values of differential

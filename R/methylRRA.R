@@ -46,22 +46,22 @@ methylRRA <- function(cpg.pval, array.type = "450K", method = "ORA",
                             GS.list=NULL, GS.idtype = "SYMBOL", GS.type = "GO",
                             minsize = 100, maxsize = 500){
     if(!is.vector(cpg.pval) | !is.numeric(cpg.pval) | is.null(names(cpg.pval)))
-        stop("Input CpG pvalues should be a named vector\n")
+        stop("Input CpG pvalues should be a named vector")
     if(sum(cpg.pval==0)>0)
-        stop("Input CpG pvalues should not contain 0\n")
+        stop("Input CpG pvalues should not contain 0")
     if(!is.list(GS.list)&!is.null(GS.list))
-        stop("Input gene sets should be a list\n")
+        stop("Input gene sets should be a list")
     method = match.arg(method, c("ORA", "GSEA"))
     GS.idtype = match.arg(GS.idtype,
                                 c("SYMBOL", "ENSEMBL", "ENTREZID", "REFSEQ"))
     if(!is.null(GS.list) & GS.idtype!="SYMBOL")
         GS.list = suppressMessages(lapply(GS.list, function(x)
-            return( select(org.Hs.eg.db, x, columns = "SYMBOL",
-                                keytype = GS.idtype)$SYMBOL)) )
+            select(org.Hs.eg.db, x, columns = "SYMBOL",
+                        keytype = GS.idtype)$SYMBOL))
     GS.type = match.arg(GS.type, c("GO", "KEGG", "Reactome"))
 
     if(array.type!="450K" & array.type!="EPIC")
-        stop("Input array type should be either 450K or EPIC\n")
+        stop("Input array type should be either 450K or EPIC")
     if(array.type=="450K")
         FullAnnot = getAnnot("450K")
     else
@@ -76,21 +76,21 @@ methylRRA <- function(cpg.pval, array.type = "450K", method = "ORA",
     geneID.list = split(cpg.pval, names(cpg.pval))
     ## convert cpg.pval to a list, each element of this
     # list is a gene and it's corresponding cpg pvalue
-    rho = unlist(lapply(geneID.list, rhoScores))
+    rho = vapply(geneID.list, rhoScores, FUN.VALUE = 1)
     ## for each gene, compute its rho score
-    minbeta = unlist( lapply(geneID.list,
-                                    function(x){ return(min(betaScores(x)))}) )
+    minbeta = vapply(geneID.list, function(x)
+        { return(min(betaScores(x)))}, FUN.VALUE = 1)
     ## for each gene, compute its beta value
 
     if(is.null(GS.list))
         GS.list = getGS(names(geneID.list), GS.type = GS.type)
     GS.list = lapply(GS.list, na.omit)
 
-    GS.sizes = unlist(lapply(GS.list, length))
+    GS.sizes = vapply(GS.list, length, FUN.VALUE = 0)
     GS.list.sub = GS.list[GS.sizes>=minsize & GS.sizes<=maxsize]
     ## filter gene sets by their sizes
-    cat(length(GS.list.sub), "gene sets are being tested...\n")
-    size = unlist(lapply(GS.list.sub, length))
+    message(length(GS.list.sub), " gene sets are being tested...")
+    size = vapply(GS.list.sub, length, FUN.VALUE = 0)
     ID = names(GS.list.sub)
     gs.pval = rep(NA, length(GS.list.sub))
 
@@ -116,13 +116,13 @@ methylRRA <- function(cpg.pval, array.type = "450K", method = "ORA",
             ID = ID, size = size, pvalue = gs.pval, padj = gs.padj)
         rownames(res) = ID
         res = res[order(res$pvalue), ]
-        cat("Done!\n")
+        message("Done!")
         return(res)
     }
 
     if(method == "GSEA"){
         GS2gene = data.frame(
-            ont = rep(names(GS.list), sapply(GS.list, length)),
+            ont = rep(names(GS.list), vapply(GS.list, length, FUN.VALUE = 0)),
                 gene = unlist(GS.list))
         zscore = qnorm(rho/2, lower.tail = FALSE)
         zscore = zscore[order(zscore, decreasing = TRUE)]
@@ -131,8 +131,10 @@ methylRRA <- function(cpg.pval, array.type = "450K", method = "ORA",
         GSEAres = GSEA(geneList = zscore, minGSSize = minsize,
                             maxGSSize = maxsize, pvalueCutoff = 1,
                             TERM2GENE = GS2gene)
-        GSEAres = GSEAres[,c(1,3,4,5,6,7,10)]
-        cat("Done!\n")
+        GSEAres = GSEAres[,c("ID","setSize","enrichmentScore",
+                                "NES","pvalue","p.adjust","leading_edge")]
+        GSEAres = data.frame(GSEAres)
+        message("Done!")
         return(GSEAres)
     }
 }

@@ -31,7 +31,8 @@ getAnnot = function(array.type){
     FullAnnot = FullAnnot[,c("Name","UCSC_RefGene_Name")]
     FullAnnot = FullAnnot[str_length(rownames(FullAnnot))==10,]
     FullAnnot = FullAnnot[!FullAnnot$UCSC_RefGene_Name=="",]
-    temp = sapply(strsplit(FullAnnot$UCSC_RefGene_Name,split=";"), '[', 1)
+    temp = vapply(strsplit(FullAnnot$UCSC_RefGene_Name,split=";"),
+                        '[', 1, FUN.VALUE=character(1))
     ## get the first gene in each USCS_RefGene_Name
     FullAnnot$UCSC_RefGene_Name = temp
 
