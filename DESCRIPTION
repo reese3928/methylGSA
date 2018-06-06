@@ -1,7 +1,7 @@
 Package: methylGSA
 Type: Package
 Title: methylGSA: Gene Set Analysis Using the Outcome of Differential Methylation
-Version: 0.99.7
+Version: 0.99.8
 Authors@R: c(
     person("Pei Fen", "Kuan", 
         email = "peifen.kuan@stonybrook.edu", role = "aut"),
