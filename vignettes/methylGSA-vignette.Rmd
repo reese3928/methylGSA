@@ -127,7 +127,7 @@ Enrichment Analysis (GSEAPreranked) on this ordered list.
 
 To apply ORA approach, we use argument `method = "ORA"` in methylRRA
 
-```{r}
+```{r eval=FALSE}
 res2 = methylRRA(cpg.pval = cpg.pval, method = "ORA", 
                     minsize = 200, maxsize = 210)
 head(res2, 15)
@@ -135,7 +135,7 @@ head(res2, 15)
 
 To apply GSEAPreranked approach, we use argument `method = "GSEA"` in methylRRA
 
-```{r}
+```{r eval=FALSE}
 res3 = methylRRA(cpg.pval = cpg.pval, method = "GSEA", 
                     minsize = 200, maxsize = 210)
 head(res3, 10)
@@ -156,7 +156,7 @@ the cut-off point to call a probe differentially methylated.
 
 ### Example
 
-```{r}
+```{r eval=FALSE}
 res4 = methylgometh(cpg.pval = cpg.pval, sig.cut = 0.001, 
                         minsize = 200, maxsize = 210)
 head(res4, 15)
@@ -205,7 +205,7 @@ head(res5, 10)
 
 Here is another example. Test Reactome pathways using methylglm
 
-```{r}
+```{r eval=FALSE}
 res6 = methylglm(cpg.pval = cpg.pval, array.type = "450K", 
                     GS.type = "Reactome", minsize = 100, maxsize = 110)
 head(res6, 10)
