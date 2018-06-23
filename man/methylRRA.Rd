@@ -5,14 +5,19 @@
 \title{Enrichment analysis after adjusting multiple p-values of
 each gene by Robust Rank Aggregation}
 \usage{
-methylRRA(cpg.pval, array.type = "450K", method = "ORA", GS.list = NULL,
-    GS.idtype = "SYMBOL", GS.type = "GO", minsize = 100, maxsize = 500)
+methylRRA(cpg.pval, array.type = "450K", CpG2Gene = NULL, method = "ORA",
+  GS.list = NULL, GS.idtype = "SYMBOL", GS.type = "GO", minsize = 100,
+  maxsize = 500)
 }
 \arguments{
 \item{cpg.pval}{A named vector containing p-values of differential
 methylation test. Names should be CpG IDs.}
 
-\item{array.type}{A string. Either "450K" or "EPIC". Default is "450K".}
+\item{array.type}{A string. Either "450K" or "EPIC". Default is "450K".
+This argument will be ignore if CpG2Gene is provided.}
+
+\item{CpG2Gene}{A matrix or data frame with 1st column CpG ID and 2nd
+column gene name. Default is NULL.}
 
 \item{method}{A string. "ORA" or "GSEA". Default is "ORA"}
 
@@ -21,7 +26,7 @@ Gene Ontology is used. Entry names are gene sets names, and elements
 correpond to genes that gene sets contain.}
 
 \item{GS.idtype}{A string. "SYMBOL", "ENSEMBL", "ENTREZID" or
-"REFSEQ". Default is "SYMBOL"}
+"REFSEQ". Default is "SYMBOL".}
 
 \item{GS.type}{A string. "GO", "KEGG", or "Reactome". Default is "GO"}
 
@@ -39,11 +44,12 @@ This function implements enrichment after adjusting
 multiple p-values of each gene by Robust Rank Aggregation.
 }
 \examples{
-library(IlluminaHumanMethylation450kanno.ilmn12.hg19)
+data(CpG2Genetoy)
 data(cpgtoy)
 data(GSlisttoy)
 GS.list = GS.list[1:10]
-res1 = methylRRA(cpg.pval = cpg.pval, method = "ORA", GS.list = GS.list)
+res1 = methylRRA(cpg.pval = cpg.pval, CpG2Gene = CpG2Gene,
+method = "ORA", GS.list = GS.list)
 head(res1)
 }
 \references{

@@ -6,12 +6,15 @@
 #' @param cpg.pval A named vector containing p-values of differential
 #' methylation test. Names should be CpG IDs.
 #' @param array.type A string. Either "450K" or "EPIC". Default is "450K".
+#' This argument will be ignore if CpG2Gene is provided.
+#' @param CpG2Gene A matrix or data frame with 1st column CpG ID and 2nd
+#' column gene name. Default is NULL.
 #' @param method A string. "ORA" or "GSEA". Default is "ORA"
 #' @param GS.list A list. Default is NULL. If there is no input list,
 #' Gene Ontology is used. Entry names are gene sets names, and elements
 #' correpond to genes that gene sets contain.
 #' @param GS.idtype A string. "SYMBOL", "ENSEMBL", "ENTREZID" or
-#' "REFSEQ". Default is "SYMBOL"
+#' "REFSEQ". Default is "SYMBOL".
 #' @param GS.type A string. "GO", "KEGG", or "Reactome". Default is "GO"
 #' @param minsize An integer. If the number of genes in a gene set is
 #' less than this integer, this gene set is not tested. Default is 100.
@@ -35,16 +38,17 @@
 #' @references Carlson M (2017). org.Hs.eg.db: Genome wide annotation for
 #' Human. R package version 3.5.0.
 #' @examples
-#' library(IlluminaHumanMethylation450kanno.ilmn12.hg19)
+#' data(CpG2Genetoy)
 #' data(cpgtoy)
 #' data(GSlisttoy)
 #' GS.list = GS.list[1:10]
-#' res1 = methylRRA(cpg.pval = cpg.pval, method = "ORA", GS.list = GS.list)
+#' res1 = methylRRA(cpg.pval = cpg.pval, CpG2Gene = CpG2Gene,
+#' method = "ORA", GS.list = GS.list)
 #' head(res1)
 
-methylRRA <- function(cpg.pval, array.type = "450K", method = "ORA",
-                            GS.list=NULL, GS.idtype = "SYMBOL", GS.type = "GO",
-                            minsize = 100, maxsize = 500){
+methylRRA <- function(cpg.pval, array.type = "450K", CpG2Gene = NULL,
+                            method = "ORA", GS.list=NULL, GS.idtype = "SYMBOL",
+                            GS.type = "GO", minsize = 100, maxsize = 500){
     if(!is.vector(cpg.pval) | !is.numeric(cpg.pval) | is.null(names(cpg.pval)))
         stop("Input CpG pvalues should be a named vector")
     if(sum(cpg.pval==0)>0)
@@ -60,12 +64,25 @@ methylRRA <- function(cpg.pval, array.type = "450K", method = "ORA",
                         keytype = GS.idtype)$SYMBOL))
     GS.type = match.arg(GS.type, c("GO", "KEGG", "Reactome"))
 
-    if(array.type!="450K" & array.type!="EPIC")
-        stop("Input array type should be either 450K or EPIC")
-    if(array.type=="450K")
-        FullAnnot = getAnnot("450K")
-    else
-        FullAnnot = getAnnot("EPIC")
+    if(!is.null(CpG2Gene)){
+        if(!is.character(CpG2Gene[,1])|!is.character(CpG2Gene[,2]))
+            stop("CpG2Gene should be a matrix or data frame with
+                    1st column CpG ID and 2nd column gene name")
+        if(ncol(CpG2Gene)!=2)
+            stop("CpG2Gene should contain two columns")
+        FullAnnot = data.frame(CpG2Gene)
+        colnames(FullAnnot) = c("Name", "UCSC_RefGene_Name")
+        rownames(FullAnnot) = FullAnnot$Name
+    }
+
+    else{
+        if(array.type!="450K" & array.type!="EPIC")
+            stop("Input array type should be either 450K or EPIC")
+        if(array.type=="450K")
+            FullAnnot = getAnnot("450K")
+        else
+            FullAnnot = getAnnot("EPIC")
+    }
 
     cpg.intersect = intersect(names(cpg.pval), rownames(FullAnnot))
     cpg.pval = cpg.pval[cpg.intersect]
@@ -79,7 +96,7 @@ methylRRA <- function(cpg.pval, array.type = "450K", method = "ORA",
     rho = vapply(geneID.list, rhoScores, FUN.VALUE = 1)
     ## for each gene, compute its rho score
     minbeta = vapply(geneID.list, function(x)
-        { return(min(betaScores(x)))}, FUN.VALUE = 1)
+        min(betaScores(x)), FUN.VALUE = 1)
     ## for each gene, compute its beta value
 
     if(is.null(GS.list))
@@ -124,7 +141,7 @@ methylRRA <- function(cpg.pval, array.type = "450K", method = "ORA",
         GS2gene = data.frame(
             ont = rep(names(GS.list), vapply(GS.list, length, FUN.VALUE = 0)),
                 gene = unlist(GS.list))
-        zscore = qnorm(rho/2, lower.tail = FALSE)
+        zscore = qnorm(minbeta/2, lower.tail = FALSE)
         zscore = zscore[order(zscore, decreasing = TRUE)]
         zscore[is.infinite(zscore)] = suppressWarnings(
             max(zscore[-which(is.infinite(zscore))]))

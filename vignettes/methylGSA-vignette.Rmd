@@ -52,6 +52,7 @@ weighted resampling and Wallenius non-central hypergeometric approximation.
 
 * "450K" (via [5])
 * "EPIC" (via [6])
+* User-supplied mapping between CpG ID and gene name.
 
 ## Description of methylglm
 
@@ -168,7 +169,10 @@ head(res4, 15)
 methylGSA provides many other options for users to customize the analysis. 
 
 * `array.type` is to specify which array type to use. It is either "450K" or 
-"EPIC". Default is "450K".
+"EPIC". Default is "450K". This argument will be ignore if CpG2Gene is 
+provided.
+* `CpG2Gene` is user supplied mapping between CpG ID and gene. It should be 
+a matrix or data frame with 1st column CpG ID and 2nd column gene name.
 * `GS.list` is user input gene sets to be tested. It should be a list with 
 entry names gene sets IDs and elements correpond to genes that gene sets 
 contain. If there is no input list, Gene Ontology is used.
@@ -186,18 +190,24 @@ greater than this integer, this gene set is not tested. Default is 500.
 
 ### Example
 
-Here an example of user input gene sets. The gene ID type is gene symbol. 
+Here an example of user input gene sets. The gene ID type is gene symbol
 ```{r}
 data(GSlisttoy)
 ## to make the display compact, only a proportion of each gene set is shown
 head(lapply(GS.list, function(x) return(x[1:30])), 3)   
 ```
 
-Test these gene sets using "ORA" in methylRRA
+This is an example of user-supplied CpG to gene mapping
+```{r}
+data(CpG2Genetoy)
+head(CpG2Gene)   
+```
+
+Test the gene sets using "ORA" in methylRRA
 
 ```{r}
 GS.list = GS.list[1:10]
-res5 = methylRRA(cpg.pval = cpg.pval, array.type = "450K", method = "ORA", 
+res5 = methylRRA(cpg.pval = cpg.pval, CpG2Gene = CpG2Gene, method = "ORA", 
                     GS.list = GS.list, GS.idtype = "SYMBOL", 
                     minsize = 100, maxsize = 300)
 head(res5, 10)

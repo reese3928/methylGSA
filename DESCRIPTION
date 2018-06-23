@@ -1,12 +1,12 @@
 Package: methylGSA
 Type: Package
 Title: methylGSA: Gene Set Analysis Using the Outcome of Differential Methylation
-Version: 0.99.10
+Version: 0.99.11
 Authors@R: c(
-    person("Pei Fen", "Kuan", 
-        email = "peifen.kuan@stonybrook.edu", role = "aut"),
     person("Xu", "Ren", 
-        email = "xuren2120@gmail.com", role = c("aut", "cre")))
+        email = "xuren2120@gmail.com", role = c("aut", "cre")),
+    person("Pei Fen", "Kuan", 
+        email = "peifen.kuan@stonybrook.edu", role = "aut"))
 Description: The main functions for methylGSA are methylglm and methylRRA.
     methylGSA implements logistic regression adjusting number of probes as 
     a covariate.
