@@ -11,7 +11,7 @@
 #' Gene Ontology is used. Entry names are gene sets names, and elements
 #' correpond to genes that gene sets contain.
 #' @param GS.idtype A string. "SYMBOL", "ENSEMBL", "ENTREZID" or "REFSEQ".
-#' Default is "SYMBOL"
+#' Default is "SYMBOL".
 #' @param GS.type A string. "GO", "KEGG", or "Reactome"
 #' @param minsize An integer. If the number of genes in a gene set
 #' is less than this integer, this gene set is not tested. Default is 100.
@@ -34,11 +34,13 @@
 #' @references Carlson M (2017). org.Hs.eg.db: Genome wide annotation
 #' for Human. R package version 3.5.0.
 #' @examples
+#' \dontrun{
 #' library(IlluminaHumanMethylation450kanno.ilmn12.hg19)
 #' data(cpgtoy)
 #' res = methylgometh(cpg.pval = cpg.pval, sig.cut = 0.001, GS.type = "KEGG",
 #' minsize = 200, maxsize = 205)
 #' head(res)
+#' }
 
 
 methylgometh <- function(cpg.pval, sig.cut, array.type = "450K",

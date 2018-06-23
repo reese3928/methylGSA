@@ -5,7 +5,6 @@
 #' @import IlluminaHumanMethylation450kanno.ilmn12.hg19
 #' @import IlluminaHumanMethylationEPICanno.ilm10b2.hg19
 #' @importFrom stringr str_length
-#' @importFrom minfi getAnnotation
 #' @details The implementation of the function is modified
 #' from .flattenAnn function in missMethyl package.
 #' @return A data frame contains CpG IDs and gene symbols.
@@ -20,13 +19,9 @@
 
 getAnnot = function(array.type){
     if(array.type=="450K")
-        FullAnnot = getAnnotation(
-            IlluminaHumanMethylation450kanno.ilmn12.hg19
-            ::IlluminaHumanMethylation450kanno.ilmn12.hg19)
+        FullAnnot = getAnnotation(IlluminaHumanMethylation450kanno.ilmn12.hg19)
     else
-        FullAnnot = getAnnotation(
-            IlluminaHumanMethylationEPICanno.ilm10b2.hg19
-            ::IlluminaHumanMethylationEPICanno.ilm10b2.hg19)
+        FullAnnot = getAnnotation(IlluminaHumanMethylationEPICanno.ilm10b2.hg19)
 
     FullAnnot = FullAnnot[,c("Name","UCSC_RefGene_Name")]
     FullAnnot = FullAnnot[str_length(rownames(FullAnnot))==10,]

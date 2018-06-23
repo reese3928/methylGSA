@@ -21,7 +21,7 @@ Gene Ontology is used. Entry names are gene sets names, and elements
 correpond to genes that gene sets contain.}
 
 \item{GS.idtype}{A string. "SYMBOL", "ENSEMBL", "ENTREZID" or "REFSEQ".
-Default is "SYMBOL"}
+Default is "SYMBOL".}
 
 \item{GS.type}{A string. "GO", "KEGG", or "Reactome"}
 
@@ -39,11 +39,13 @@ This function calls gometh or gsameth function
 in missMethyl package to adjust number of probes in gene set testing
 }
 \examples{
+\dontrun{
 library(IlluminaHumanMethylation450kanno.ilmn12.hg19)
 data(cpgtoy)
 res = methylgometh(cpg.pval = cpg.pval, sig.cut = 0.001, GS.type = "KEGG",
 minsize = 200, maxsize = 205)
 head(res)
+}
 }
 \references{
 Phipson, B., Maksimovic, J., and Oshlack, A. (2015).

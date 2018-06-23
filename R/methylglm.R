@@ -6,9 +6,9 @@
 #' @param cpg.pval A named vector containing p-values of differential
 #' methylation test. Names should be CpG IDs.
 #' @param array.type A string. Either "450K" or "EPIC". Default is "450K".
-#' This argument will be ignore if CpG2Gene is provided.
-#' @param CpG2Gene A matrix or data frame with 1st column CpG ID and 2nd
-#' column gene name. Default is NULL.
+#' This argument will be ignored if FullAnnot is provided.
+#' @param FullAnnot A data frame provided by prepareAnnot function.
+#' Default is NULL.
 #' @param GS.list A list. Default is NULL. If there is no input list,
 #' Gene Ontology is used. Entry names are gene sets names, and elements
 #' correpond to genes that gene sets contain.
@@ -39,11 +39,12 @@
 #' data(cpgtoy)
 #' data(GSlisttoy)
 #' GS.list = GS.list[1:10]
-#' res = methylglm(cpg.pval = cpg.pval, CpG2Gene = CpG2Gene, GS.list = GS.list,
-#' GS.idtype = "SYMBOL")
+#' FullAnnot = prepareAnnot(CpG2Gene)
+#' res = methylglm(cpg.pval = cpg.pval, FullAnnot = FullAnnot,
+#' GS.list = GS.list, GS.idtype = "SYMBOL")
 #' head(res)
 
-methylglm <- function(cpg.pval, array.type = "450K", CpG2Gene = NULL,
+methylglm <- function(cpg.pval, array.type = "450K", FullAnnot = NULL,
                             GS.list=NULL, GS.idtype = "SYMBOL", GS.type = "GO",
                             minsize = 100, maxsize = 500){
     if(!is.vector(cpg.pval) | !is.numeric(cpg.pval) | is.null(names(cpg.pval)))
@@ -62,18 +63,7 @@ methylglm <- function(cpg.pval, array.type = "450K", CpG2Gene = NULL,
                             keytype = GS.idtype)$SYMBOL))
     GS.type = match.arg(GS.type, c("GO", "KEGG", "Reactome"))
 
-    if(!is.null(CpG2Gene)){
-        if(!is.character(CpG2Gene[,1])|!is.character(CpG2Gene[,2]))
-            stop("CpG2Gene should be a matrix or data frame with
-                    1st column CpG ID and 2nd column gene name")
-        if(ncol(CpG2Gene)!=2)
-            stop("CpG2Gene should contain two columns")
-        FullAnnot = data.frame(CpG2Gene)
-        colnames(FullAnnot) = c("Name", "UCSC_RefGene_Name")
-        rownames(FullAnnot) = FullAnnot$Name
-    }
-
-    else{
+    if(is.null(FullAnnot)){
         if(array.type!="450K" & array.type!="EPIC")
             stop("Input array type should be either 450K or EPIC")
         if(array.type=="450K")

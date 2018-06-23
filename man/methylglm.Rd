@@ -5,7 +5,7 @@
 \title{Implement logistic regression adjusting
 for number of probes in enrichment analysis}
 \usage{
-methylglm(cpg.pval, array.type = "450K", CpG2Gene = NULL, GS.list = NULL,
+methylglm(cpg.pval, array.type = "450K", FullAnnot = NULL, GS.list = NULL,
   GS.idtype = "SYMBOL", GS.type = "GO", minsize = 100, maxsize = 500)
 }
 \arguments{
@@ -13,10 +13,10 @@ methylglm(cpg.pval, array.type = "450K", CpG2Gene = NULL, GS.list = NULL,
 methylation test. Names should be CpG IDs.}
 
 \item{array.type}{A string. Either "450K" or "EPIC". Default is "450K".
-This argument will be ignore if CpG2Gene is provided.}
+This argument will be ignored if FullAnnot is provided.}
 
-\item{CpG2Gene}{A matrix or data frame with 1st column CpG ID and 2nd
-column gene name. Default is NULL.}
+\item{FullAnnot}{A data frame provided by prepareAnnot function.
+Default is NULL.}
 
 \item{GS.list}{A list. Default is NULL. If there is no input list,
 Gene Ontology is used. Entry names are gene sets names, and elements
@@ -49,8 +49,9 @@ data(CpG2Genetoy)
 data(cpgtoy)
 data(GSlisttoy)
 GS.list = GS.list[1:10]
-res = methylglm(cpg.pval = cpg.pval, CpG2Gene = CpG2Gene, GS.list = GS.list,
-GS.idtype = "SYMBOL")
+FullAnnot = prepareAnnot(CpG2Gene)
+res = methylglm(cpg.pval = cpg.pval, FullAnnot = FullAnnot,
+GS.list = GS.list, GS.idtype = "SYMBOL")
 head(res)
 }
 \references{

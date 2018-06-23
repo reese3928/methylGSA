@@ -13,6 +13,7 @@ FullAnnot$UCSC_RefGene_Name = temp
 colnames(FullAnnot) = c("CpG", "Gene")
 rownames(FullAnnot) = NULL
 CpG2Gene = FullAnnot
+CpG2Gene = data.frame(CpG2Gene)
 
 save(CpG2Gene, file = 'data/CpG2Genetoy.RData', compress = 'xz')
 

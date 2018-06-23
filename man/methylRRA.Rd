@@ -5,7 +5,7 @@
 \title{Enrichment analysis after adjusting multiple p-values of
 each gene by Robust Rank Aggregation}
 \usage{
-methylRRA(cpg.pval, array.type = "450K", CpG2Gene = NULL, method = "ORA",
+methylRRA(cpg.pval, array.type = "450K", FullAnnot = NULL, method = "ORA",
   GS.list = NULL, GS.idtype = "SYMBOL", GS.type = "GO", minsize = 100,
   maxsize = 500)
 }
@@ -14,10 +14,10 @@ methylRRA(cpg.pval, array.type = "450K", CpG2Gene = NULL, method = "ORA",
 methylation test. Names should be CpG IDs.}
 
 \item{array.type}{A string. Either "450K" or "EPIC". Default is "450K".
-This argument will be ignore if CpG2Gene is provided.}
+This argument will be ignored if FullAnnot is provided.}
 
-\item{CpG2Gene}{A matrix or data frame with 1st column CpG ID and 2nd
-column gene name. Default is NULL.}
+\item{FullAnnot}{A data frame provided by prepareAnnot function.
+Default is NULL.}
 
 \item{method}{A string. "ORA" or "GSEA". Default is "ORA"}
 
@@ -48,7 +48,8 @@ data(CpG2Genetoy)
 data(cpgtoy)
 data(GSlisttoy)
 GS.list = GS.list[1:10]
-res1 = methylRRA(cpg.pval = cpg.pval, CpG2Gene = CpG2Gene,
+FullAnnot = prepareAnnot(CpG2Gene)
+res1 = methylRRA(cpg.pval = cpg.pval, FullAnnot = FullAnnot,
 method = "ORA", GS.list = GS.list)
 head(res1)
 }

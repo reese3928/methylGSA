@@ -3,6 +3,13 @@ context("Test internal functions")
 library(org.Hs.eg.db)
 library(reactome.db)
 data(GSlisttoy)
+data(CpG2Genetoy)
+
+test_that("check prepareAnnot", {
+    colnames(CpG2Gene) = c("Name", "UCSC_RefGene_Name")
+    rownames(CpG2Gene) = CpG2Gene$Name
+    expect_identical(prepareAnnot(CpG2Gene), CpG2Gene)
+})
 
 test_that("check getGS", {
     geneids = GS.list[[1]]
@@ -27,7 +34,6 @@ test_that("check getGS", {
     KEGG.list = split(genesymbol, names(genesymbol))
 
     expect_identical(getGS(geneids, "KEGG"), KEGG.list)
-
 
     gene.entrez = suppressMessages(
         select(org.Hs.eg.db, geneids,

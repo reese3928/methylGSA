@@ -4,9 +4,10 @@ data(CpG2Genetoy)
 data(cpgtoy)
 data(GSlisttoy)
 GS.list = GS.list[1:10]
+FullAnnot = prepareAnnot(CpG2Gene)
 
 test_that("check for valid output", {
-    res1 = methylglm(cpg.pval = cpg.pval, CpG2Gene = CpG2Gene,
+    res1 = methylglm(cpg.pval = cpg.pval, FullAnnot = FullAnnot,
                      GS.list = GS.list, GS.idtype = "SYMBOL",
                      minsize = 100, maxsize = 300)
     expect_is(res1, 'data.frame')
@@ -15,7 +16,7 @@ test_that("check for valid output", {
     expect_true(all(res1$padj>=0 & res1$padj<=1))
     expect_true(all(colnames(res1) %in% c("ID", "size", "pvalue", "padj")))
 
-    res2 = methylRRA(cpg.pval = cpg.pval, CpG2Gene = CpG2Gene,
+    res2 = methylRRA(cpg.pval = cpg.pval, FullAnnot = FullAnnot,
                      method = "ORA", GS.list = GS.list)
     expect_is(res2, 'data.frame')
     expect_equal(dim(res2)[2], 4)
@@ -23,7 +24,7 @@ test_that("check for valid output", {
     expect_true(all(res2$padj>=0 & res2$padj<=1))
     expect_true(all(colnames(res2) %in% c("ID", "size", "pvalue", "padj")))
 
-    res3 = methylRRA(cpg.pval = cpg.pval, CpG2Gene = CpG2Gene,
+    res3 = methylRRA(cpg.pval = cpg.pval, FullAnnot = FullAnnot,
                      method = "GSEA", GS.list = GS.list)
     expect_is(res3, 'data.frame')
     expect_equal(dim(res3)[2], 7)

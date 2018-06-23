@@ -7,7 +7,8 @@
 getGS(geneids, GS.type)
 }
 \arguments{
-\item{geneids}{A vector contains all gene ids of interest.}
+\item{geneids}{A vector contains all gene ids of interest. Gene ids should
+be gene symbol.}
 
 \item{GS.type}{A string. "GO", "KEGG", or "Reactome".}
 }
@@ -17,6 +18,11 @@ interest and their corresponding genes.
 }
 \description{
 This function gets gene sets information.
+}
+\examples{
+geneids = c("FKBP5", "NDUFA1", "STAT5B")
+GO.list = getGS(geneids, "KEGG")
+head(GO.list)
 }
 \references{
 Carlson M (2017). org.Hs.eg.db:

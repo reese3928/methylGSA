@@ -19,6 +19,7 @@ NULL
 #' @keywords datasets
 NULL
 
+
 #' @title An example of user user-supplied mapping between CpGs and genes
 #'
 #' @description An example of user user-supplied mapping between CpGs and genes

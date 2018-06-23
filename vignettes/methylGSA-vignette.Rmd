@@ -1,6 +1,6 @@
 ---
 title: "methylGSA: Gene Set Analysis for DNA Methylation Datasets"
-author: "Pei Fen Kuan and Xu Ren"
+author: "Xu Ren and Pei Fen Kuan"
 date: "`r Sys.Date()`"
 output: 
     rmarkdown::html_document:
@@ -42,7 +42,7 @@ weighted resampling and Wallenius non-central hypergeometric approximation.
 * Gene Ontology (via org.Hs.eg.db)
 * KEGG (via org.Hs.eg.db)
 * Reactome (via reactome.db)
-* User input gene sets. Supported input gene ID types:
+* User-supplied gene sets. Supported input gene ID types:
     + "SYMBOL"
     + "ENSEMBL"
     + "ENTREZID"
@@ -169,10 +169,10 @@ head(res4, 15)
 methylGSA provides many other options for users to customize the analysis. 
 
 * `array.type` is to specify which array type to use. It is either "450K" or 
-"EPIC". Default is "450K". This argument will be ignore if CpG2Gene is 
+"EPIC". Default is "450K". This argument will be ignored if `FullAnnot` is 
 provided.
-* `CpG2Gene` is user supplied mapping between CpG ID and gene. It should be 
-a matrix or data frame with 1st column CpG ID and 2nd column gene name.
+* `FullAnnot` is preprocessed mapping between CpG ID and gene name provided by
+prepareAnnot function. Default is NULL. Check example below for details. 
 * `GS.list` is user input gene sets to be tested. It should be a list with 
 entry names gene sets IDs and elements correpond to genes that gene sets 
 contain. If there is no input list, Gene Ontology is used.
@@ -197,17 +197,27 @@ data(GSlisttoy)
 head(lapply(GS.list, function(x) return(x[1:30])), 3)   
 ```
 
-This is an example of user-supplied CpG to gene mapping
+methylglm and methylRRA support user supplied CpG ID to gene mapping. The 
+mapping is expected to be a matrix, or a data frame or a list. For a 
+matrix or data frame, 1st column should be CpG ID and 2nd column should be gene 
+name. For a list, entry names should be gene names and elements correpond to 
+CpG IDs. This is an example of user-supplied CpG to gene mapping:
 ```{r}
 data(CpG2Genetoy)
 head(CpG2Gene)   
 ```
 
-Test the gene sets using "ORA" in methylRRA
+To use user supplied mapping in methylglm or methylRRA, first preprocess the
+mapping by prepareAnnot function
+```{r}
+FullAnnot = prepareAnnot(CpG2Gene) 
+```
 
+Test the gene sets using "ORA" in methylRRA, use `FullAnnot` argument to 
+provide the preprocessed CpG ID to gene mapping.
 ```{r}
 GS.list = GS.list[1:10]
-res5 = methylRRA(cpg.pval = cpg.pval, CpG2Gene = CpG2Gene, method = "ORA", 
+res5 = methylRRA(cpg.pval = cpg.pval, FullAnnot = FullAnnot, method = "ORA", 
                     GS.list = GS.list, GS.idtype = "SYMBOL", 
                     minsize = 100, maxsize = 300)
 head(res5, 10)
