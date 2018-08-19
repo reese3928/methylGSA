@@ -9,6 +9,7 @@
 #' This argument will be ignored if FullAnnot is provided.
 #' @param FullAnnot A data frame provided by prepareAnnot function.
 #' Default is NULL.
+#' @param group A string. "all", "body" or "promoter". Default is "all".
 #' @param method A string. "ORA" or "GSEA". Default is "ORA"
 #' @param GS.list A list. Default is NULL. If there is no input list,
 #' Gene Ontology is used. Entry names are gene sets names, and elements
@@ -47,9 +48,10 @@
 #' method = "ORA", GS.list = GS.list)
 #' head(res1)
 
-methylRRA <- function(cpg.pval, array.type = "450K", FullAnnot = NULL,
-                            method = "ORA", GS.list=NULL, GS.idtype = "SYMBOL",
-                            GS.type = "GO", minsize = 100, maxsize = 500){
+methylRRA <- function(cpg.pval, array.type = "450K", FullAnnot = NULL, 
+                            group = "all", method = "ORA", GS.list=NULL, 
+                            GS.idtype = "SYMBOL", GS.type = "GO", 
+                            minsize = 100, maxsize = 500){
     if(!is.vector(cpg.pval) | !is.numeric(cpg.pval) | is.null(names(cpg.pval)))
         stop("Input CpG pvalues should be a named vector")
     if(sum(cpg.pval==0)>0)
@@ -64,14 +66,15 @@ methylRRA <- function(cpg.pval, array.type = "450K", FullAnnot = NULL,
             select(org.Hs.eg.db, x, columns = "SYMBOL",
                         keytype = GS.idtype)$SYMBOL))
     GS.type = match.arg(GS.type, c("GO", "KEGG", "Reactome"))
+    group = match.arg(group, c("all", "body", "promoter"))
 
     if(is.null(FullAnnot)){
         if(array.type!="450K" & array.type!="EPIC")
             stop("Input array type should be either 450K or EPIC")
         if(array.type=="450K")
-            FullAnnot = getAnnot("450K")
+            FullAnnot = getAnnot("450K", group)
         else
-            FullAnnot = getAnnot("EPIC")
+            FullAnnot = getAnnot("EPIC", group)
     }
 
     cpg.intersect = intersect(names(cpg.pval), rownames(FullAnnot))
@@ -89,8 +92,11 @@ methylRRA <- function(cpg.pval, array.type = "450K", FullAnnot = NULL,
         min(betaScores(x)), FUN.VALUE = 1)
     ## for each gene, compute its beta value
 
-    if(is.null(GS.list))
+    flag = 0
+    if(is.null(GS.list)){
         GS.list = getGS(names(geneID.list), GS.type = GS.type)
+        flag = 1
+    }
     GS.list = lapply(GS.list, na.omit)
 
     GS.sizes = vapply(GS.list, length, FUN.VALUE = 0)
@@ -100,6 +106,7 @@ methylRRA <- function(cpg.pval, array.type = "450K", FullAnnot = NULL,
     size = vapply(GS.list.sub, length, FUN.VALUE = 0)
     ID = names(GS.list.sub)
     gs.pval = rep(NA, length(GS.list.sub))
+    Count = rep(NA, length(GS.list.sub))
 
     if(method=="ORA"){
         rhoadj = p.adjust(rho, method = "BH")
@@ -108,19 +115,28 @@ methylRRA <- function(cpg.pval, array.type = "450K", FullAnnot = NULL,
         N = length(unique(FullAnnot.sub$UCSC_RefGene_Name))
         m = length(DEgenes)
         if(m==0){
-            gs.pval=1
+            gs.pval = 1
+            Count = 0 
             warning("No gene is significant under FDR 0.05.")
         }
         else{
             for(i in seq_along(GS.list.sub)){
                 q = sum(DEgenes %in% GS.list.sub[[i]])
+                Count[i] = q
                 gs.pval[i] = phyper(q = q, m = m, n = N-m,
                                         k = size[i], lower.tail=FALSE)
             }
         }
         gs.padj = p.adjust(gs.pval, method = "BH")
-        res = data.frame(
-            ID = ID, size = size, pvalue = gs.pval, padj = gs.padj)
+        
+        if(flag==1){
+            des = getDescription(GSids = ID, GS.type = GS.type)
+            res = data.frame(ID = ID, Description = des, Count = Count, 
+                             Size = size, pvalue = gs.pval, padj = gs.padj)
+        }
+        else
+            res = data.frame(ID = ID, Count = Count, Size = size,
+                             pvalue = gs.pval, padj = gs.padj)
         rownames(res) = ID
         res = res[order(res$pvalue), ]
         message("Done!")
@@ -141,6 +157,14 @@ methylRRA <- function(cpg.pval, array.type = "450K", FullAnnot = NULL,
         GSEAres = GSEAres[,c("ID","setSize","enrichmentScore",
                                 "NES","pvalue","p.adjust","leading_edge")]
         GSEAres = data.frame(GSEAres)
+        if(flag==1){
+            des = getDescription(GSids = GSEAres$ID, GS.type = GS.type)
+            GSEAres$Description = des 
+            GSEAres = GSEAres[,c("ID","Description","setSize","enrichmentScore",
+                                 "NES","pvalue","p.adjust","leading_edge")]
+        }
+        colnames(GSEAres)[which(colnames(GSEAres)=="setSize")] = "Size"
+        colnames(GSEAres)[which(colnames(GSEAres)=="p.adjust")] = "padj"
         message("Done!")
         return(GSEAres)
     }

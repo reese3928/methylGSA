@@ -5,8 +5,9 @@
 \title{Enrichment analysis after adjusting multiple p-values of
 each gene by Robust Rank Aggregation}
 \usage{
-methylRRA(cpg.pval, array.type = "450K", FullAnnot = NULL, method = "ORA",
-  GS.list = NULL, GS.idtype = "SYMBOL", GS.type = "GO", minsize = 100,
+methylRRA(cpg.pval, array.type = "450K", FullAnnot = NULL,
+  group = "all", method = "ORA", GS.list = NULL,
+  GS.idtype = "SYMBOL", GS.type = "GO", minsize = 100,
   maxsize = 500)
 }
 \arguments{
@@ -18,6 +19,8 @@ This argument will be ignored if FullAnnot is provided.}
 
 \item{FullAnnot}{A data frame provided by prepareAnnot function.
 Default is NULL.}
+
+\item{group}{A string. "all", "body" or "promoter". Default is "all".}
 
 \item{method}{A string. "ORA" or "GSEA". Default is "ORA"}
 

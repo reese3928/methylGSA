@@ -66,6 +66,15 @@ methylgometh <- function(cpg.pval, sig.cut, array.type = "450K",
                             plot.bias = FALSE, prior.prob = TRUE)
         res = res[res$N>=minsize & res$N<=maxsize,]
         res = res[order(res$P.DE),]
+        res$ID = rownames(res)
+        if(GS.type=="GO"){
+            colnames(res) = c("Description", "Ont", "Size", "Count", 
+                              "pvalue", "padj", "ID")
+        }
+        else{
+            colnames(res) = c("Description", "Size", "Count", 
+                              "pvalue", "padj", "ID")
+        }
         message("Done!")
         return(res)
     }
@@ -97,8 +106,14 @@ methylgometh <- function(cpg.pval, sig.cut, array.type = "450K",
                             collection = reactome.list.sub,
                             array.type=array.type,
                             plot.bias = FALSE, prior.prob = TRUE)
-        res = res[res[,"N"]>=minsize & res[,"N"]<=maxsize,]
+        res = data.frame(res)
+        res = res[res$N>=minsize & res$N<=maxsize,]
+        ID = rownames(res)
+        Description = getDescription(rownames(res), "Reactome")
+        res = cbind(ID, Description, res)
         res = res[order(res[,"P.DE"]),]
+        colnames(res) = c("ID", "Description", "Size", 
+                          "Count", "pvalue", "padj")
         message("Done!")
         return(res)
     }
@@ -122,7 +137,11 @@ methylgometh <- function(cpg.pval, sig.cut, array.type = "450K",
         res = gsameth(sig.cpg = sig.cpg, all.cpg = names(cpg.pval),
                             collection = GS.list.sub, array.type=array.type,
                             plot.bias = FALSE, prior.prob = TRUE)
+        res = data.frame(res)
+        ID = rownames(res)
+        res = cbind(ID, res)
         res = res[order(res[,"P.DE"]),]
+        colnames(res) = c("ID", "Size", "Count", "pvalue", "padj")
         message("Done!")
         return(res)
     }

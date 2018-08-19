@@ -23,6 +23,8 @@ getGS = function(geneids, GS.type){
     message("retrieving ", GS.type, " sets...")
     if(GS.type == "KEGG")
         GS.type = "PATH"
+    if(GS.type == "GO")
+        GS.type = "GOALL"
     if(GS.type == "Reactome"){
         ## first convert id to entrezid to use reactome.db
         gene.entrez = suppressMessages(

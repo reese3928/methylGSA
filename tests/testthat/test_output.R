@@ -14,15 +14,16 @@ test_that("check for valid output", {
     expect_equal(dim(res1)[2], 4)
     expect_true(all(res1$pvalue>=0 & res1$pvalue<=1))
     expect_true(all(res1$padj>=0 & res1$padj<=1))
-    expect_true(all(colnames(res1) %in% c("ID", "size", "pvalue", "padj")))
+    expect_true(all(colnames(res1) %in% c("ID", "Size", "pvalue", "padj")))
 
     res2 = methylRRA(cpg.pval = cpg.pval, FullAnnot = FullAnnot,
                      method = "ORA", GS.list = GS.list)
     expect_is(res2, 'data.frame')
-    expect_equal(dim(res2)[2], 4)
+    expect_equal(dim(res2)[2], 5)
     expect_true(all(res2$pvalue>=0 & res2$pvalue<=1))
     expect_true(all(res2$padj>=0 & res2$padj<=1))
-    expect_true(all(colnames(res2) %in% c("ID", "size", "pvalue", "padj")))
+    expect_true(all(colnames(res2) %in% c("ID", "Count", 
+                                          "Size", "pvalue", "padj")))
 
     res3 = methylRRA(cpg.pval = cpg.pval, FullAnnot = FullAnnot,
                      method = "GSEA", GS.list = GS.list)
@@ -31,7 +32,7 @@ test_that("check for valid output", {
     expect_true(all(res3$pvalue>=0 & res3$pvalue<=1))
     expect_true(all(res3$p.adjust>=0 & res3$p.adjust<=1))
     expect_true(all(colnames(res3) %in%
-                        c("ID","setSize","enrichmentScore",
-                          "NES","pvalue","p.adjust","leading_edge")))
+                        c("ID","Size","enrichmentScore",
+                          "NES","pvalue","padj","leading_edge")))
 })
 

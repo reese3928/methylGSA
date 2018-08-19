@@ -5,8 +5,9 @@
 \title{Implement logistic regression adjusting
 for number of probes in enrichment analysis}
 \usage{
-methylglm(cpg.pval, array.type = "450K", FullAnnot = NULL, GS.list = NULL,
-  GS.idtype = "SYMBOL", GS.type = "GO", minsize = 100, maxsize = 500)
+methylglm(cpg.pval, array.type = "450K", FullAnnot = NULL,
+  group = "all", GS.list = NULL, GS.idtype = "SYMBOL",
+  GS.type = "GO", minsize = 100, maxsize = 500)
 }
 \arguments{
 \item{cpg.pval}{A named vector containing p-values of differential
@@ -17,6 +18,8 @@ This argument will be ignored if FullAnnot is provided.}
 
 \item{FullAnnot}{A data frame provided by prepareAnnot function.
 Default is NULL.}
+
+\item{group}{A string. "all", "body" or "promoter". Default is "all".}
 
 \item{GS.list}{A list. Default is NULL. If there is no input list,
 Gene Ontology is used. Entry names are gene sets names, and elements

@@ -9,6 +9,7 @@
 #' This argument will be ignored if FullAnnot is provided.
 #' @param FullAnnot A data frame provided by prepareAnnot function.
 #' Default is NULL.
+#' @param group A string. "all", "body" or "promoter". Default is "all".
 #' @param GS.list A list. Default is NULL. If there is no input list,
 #' Gene Ontology is used. Entry names are gene sets names, and elements
 #' correpond to genes that gene sets contain.
@@ -45,15 +46,15 @@
 #' head(res)
 
 methylglm <- function(cpg.pval, array.type = "450K", FullAnnot = NULL,
-                            GS.list=NULL, GS.idtype = "SYMBOL", GS.type = "GO",
-                            minsize = 100, maxsize = 500){
+                            group = "all", GS.list=NULL, GS.idtype = "SYMBOL", 
+                            GS.type = "GO", minsize = 100, maxsize = 500){
     if(!is.vector(cpg.pval) | !is.numeric(cpg.pval) | is.null(names(cpg.pval)))
         stop("Input CpG pvalues should be a named vector")
     if(sum(cpg.pval==0)>0)
         stop("Input CpG pvalues should not contain 0")
     if(!is.list(GS.list)&!is.null(GS.list))
         stop("Input gene sets should be a list")
-
+    
     GS.idtype = match.arg(
         GS.idtype,c("SYMBOL", "ENSEMBL", "ENTREZID", "REFSEQ"))
     if(!is.null(GS.list) & GS.idtype!="SYMBOL")
@@ -62,14 +63,15 @@ methylglm <- function(cpg.pval, array.type = "450K", FullAnnot = NULL,
                 select(org.Hs.eg.db, x, columns = "SYMBOL",
                             keytype = GS.idtype)$SYMBOL))
     GS.type = match.arg(GS.type, c("GO", "KEGG", "Reactome"))
+    group = match.arg(group, c("all", "body", "promoter"))
 
     if(is.null(FullAnnot)){
         if(array.type!="450K" & array.type!="EPIC")
             stop("Input array type should be either 450K or EPIC")
         if(array.type=="450K")
-            FullAnnot = getAnnot("450K")
+            FullAnnot = getAnnot("450K", group)
         else
-            FullAnnot = getAnnot("EPIC")
+            FullAnnot = getAnnot("EPIC", group)
     }
 
     cpg.intersect = intersect(names(cpg.pval), rownames(FullAnnot))
@@ -85,9 +87,13 @@ methylglm <- function(cpg.pval, array.type = "450K", FullAnnot = NULL,
     ## for each gene, take the minimum p-value
     probes = vapply(geneID.list, length, FUN.VALUE = 1)
     ## get number of probes for each gene
-
-    if(is.null(GS.list))
+    
+    flag = 0
+    if(is.null(GS.list)){
         GS.list = getGS(names(geneID.list), GS.type = GS.type)
+        flag = 1
+    }
+    
     GS.list = lapply(GS.list, na.omit)
 
     GS.sizes = vapply(GS.list, length, FUN.VALUE = 1)
@@ -110,7 +116,13 @@ methylglm <- function(cpg.pval, array.type = "450K", FullAnnot = NULL,
     size = vapply(GS.list.sub, length, FUN.VALUE = 1)
 
     gs.padj = p.adjust(gs.pval, method = "BH")
-    res = data.frame(ID = ID, size = size, pvalue = gs.pval, padj = gs.padj)
+    if(flag==1){
+        des = getDescription(GSids = ID, GS.type = GS.type)
+        res = data.frame(ID = ID, Description = des, Size = size,
+                         pvalue = gs.pval, padj = gs.padj)
+    }
+    else
+        res = data.frame(ID = ID, Size = size, pvalue = gs.pval, padj = gs.padj)
     rownames(res) = ID
     res = res[order(res$pvalue), ]
     message("Done!")

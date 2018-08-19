@@ -13,16 +13,16 @@ test_that("check prepareAnnot", {
 
 test_that("check getGS", {
     geneids = GS.list[[1]]
-    GOs = suppressMessages(
-        na.omit(unique(
-            select(org.Hs.eg.db, geneids, "GO",keytype = "SYMBOL")$GO)))
-    GOdf = suppressMessages(
-        select(org.Hs.eg.db, GOs, "SYMBOL", keytype = "GO"))
-    genesymbol = GOdf$SYMBOL
-    names(genesymbol) = GOdf$GO
-    GO.list = split(genesymbol, names(genesymbol))
+    #GOs = suppressMessages(
+    #    na.omit(unique(
+    #        select(org.Hs.eg.db, geneids, "GO",keytype = "SYMBOL")$GO)))
+    #GOdf = suppressMessages(
+    #    select(org.Hs.eg.db, GOs, "SYMBOL", keytype = "GO"))
+    #genesymbol = GOdf$SYMBOL
+    #names(genesymbol) = GOdf$GO
+    #GO.list = split(genesymbol, names(genesymbol))
 
-    expect_identical(getGS(geneids, "GO"), GO.list)
+    #expect_identical(getGS(geneids, "GO"), GO.list)
 
     KEGGs = suppressMessages(
         na.omit(unique(

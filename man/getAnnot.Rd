@@ -4,10 +4,12 @@
 \alias{getAnnot}
 \title{Get CpG annotation}
 \usage{
-getAnnot(array.type)
+getAnnot(array.type, group)
 }
 \arguments{
 \item{array.type}{A string. Either "450K" or "EPIC". Default is "450K".}
+
+\item{group}{A string. "all", "body" or "promoter". Default is "all".}
 }
 \value{
 A data frame contains CpG IDs and gene symbols.
