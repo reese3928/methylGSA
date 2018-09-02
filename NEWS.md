@@ -1,3 +1,7 @@
+# methylGSA 0.99.15
+* Bug fix
+* Included "top" and "sig.cut" option for methylRRA
+
 # methylGSA 0.99.14
 * Included gene sets description
 * Included visualization

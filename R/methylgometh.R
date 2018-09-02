@@ -6,6 +6,9 @@
 #' @param cpg.pval A named vector containing p-values of
 #' differential methylation test. Names should be CpG IDs.
 #' @param sig.cut A numeric value indicating cut-off value for significant CpG.
+#' Default is 0.001. This argument will be ignored if topDE is provided. 
+#' @param topDE An integer. The top number of CpGs to be declared as 
+#' significant.
 #' @param array.type A string. Either "450K" or "EPIC". Default is "450K".
 #' @param GS.list A list. Default is NULL. If there is no input list,
 #' Gene Ontology is used. Entry names are gene sets names, and elements
@@ -43,10 +46,12 @@
 #' }
 
 
-methylgometh <- function(cpg.pval, sig.cut, array.type = "450K",
+methylgometh <- function(cpg.pval, sig.cut = 0.001, topDE = NULL,
+                                array.type = "450K",
                                 GS.list=NULL, GS.idtype = "SYMBOL",
                                 GS.type = "GO",
                                 minsize = 100, maxsize = 500){
+    ## check input
     if(!is.vector(cpg.pval) | !is.numeric(cpg.pval) | is.null(names(cpg.pval)))
         stop("Input CpG pvalues should be a named vector")
     if(sum(cpg.pval==0)>0)
@@ -55,10 +60,27 @@ methylgometh <- function(cpg.pval, sig.cut, array.type = "450K",
         stop("Input gene sets should be a list")
     if(!is.numeric(sig.cut) | sig.cut>=1 | sig.cut<=0)
         stop("sig.cut should be a number between 0 and 1")
+    if(!is.null(topDE)){
+        if(!is.numeric(topDE)|floor(topDE)<=0)
+            stop("topDE should be a positive integer")
+    }
     GS.type = match.arg(GS.type, c("GO", "KEGG", "Reactome"))
 
-    sig.cpg = names(cpg.pval)[cpg.pval < sig.cut]
-
+    if(is.null(topDE)){
+        ## if topDE is not provided, declare significant genes by sig.cut
+        sig.cpg = names(cpg.pval)[cpg.pval < sig.cut]
+        if(length(sig.cpg)==0){
+            warning("No CpG is significant under cut-off ", sig.cut, 
+                    ". Use a higher cut-off or \"topDE\" argument.")
+        }else{
+            message(length(sig.cpg), 
+                    " CpGs are significant under cut-off ", sig.cut)
+        }
+    }else{
+        cpg.pval = cpg.pval[order(cpg.pval)]
+        sig.cpg = names(cpg.pval)[1:floor(topDE)]
+    }
+    
     if(is.null(GS.list) & (GS.type=="GO"|GS.type=="KEGG")){
         message(GS.type, " are being tested...")
         res = gometh(sig.cpg = sig.cpg, all.cpg = names(cpg.pval),

@@ -11,6 +11,12 @@
 #' Default is NULL.
 #' @param group A string. "all", "body" or "promoter". Default is "all".
 #' @param method A string. "ORA" or "GSEA". Default is "ORA"
+#' @param sig.cut A numeric value indicating FDR cut-off for significant gene
+#' in ORA. Default is 0.05. This argument will be ignored if topDE is provided
+#' or method = "GSEA" is used.
+#' @param topDE An integer. The top number of genes to be declared as 
+#' significant after robust rank aggregation. This argument will be ignored
+#' if method = "GSEA" is used.
 #' @param GS.list A list. Default is NULL. If there is no input list,
 #' Gene Ontology is used. Entry names are gene sets names, and elements
 #' correpond to genes that gene sets contain.
@@ -49,15 +55,25 @@
 #' head(res1)
 
 methylRRA <- function(cpg.pval, array.type = "450K", FullAnnot = NULL, 
-                            group = "all", method = "ORA", GS.list=NULL, 
+                            group = "all", method = "ORA", sig.cut = 0.05, 
+                            topDE = NULL, GS.list=NULL, 
                             GS.idtype = "SYMBOL", GS.type = "GO", 
                             minsize = 100, maxsize = 500){
+    ##  check input
     if(!is.vector(cpg.pval) | !is.numeric(cpg.pval) | is.null(names(cpg.pval)))
         stop("Input CpG pvalues should be a named vector")
     if(sum(cpg.pval==0)>0)
         stop("Input CpG pvalues should not contain 0")
     if(!is.list(GS.list)&!is.null(GS.list))
         stop("Input gene sets should be a list")
+    if(!is.numeric(sig.cut) | sig.cut>=1 | sig.cut<=0)
+        stop("sig.cut should be a number between 0 and 1")
+    if(!is.null(topDE)){
+        if(!is.numeric(topDE)|floor(topDE)<=0)
+            stop("topDE should be a positive integer")
+    }
+    
+    ## match argument and make gene id to be gene symbol
     method = match.arg(method, c("ORA", "GSEA"))
     GS.idtype = match.arg(GS.idtype,
                                 c("SYMBOL", "ENSEMBL", "ENTREZID", "REFSEQ"))
@@ -68,6 +84,7 @@ methylRRA <- function(cpg.pval, array.type = "450K", FullAnnot = NULL,
     GS.type = match.arg(GS.type, c("GO", "KEGG", "Reactome"))
     group = match.arg(group, c("all", "body", "promoter"))
 
+    ##  get annotation
     if(is.null(FullAnnot)){
         if(array.type!="450K" & array.type!="EPIC")
             stop("Input array type should be either 450K or EPIC")
@@ -79,19 +96,19 @@ methylRRA <- function(cpg.pval, array.type = "450K", FullAnnot = NULL,
 
     cpg.intersect = intersect(names(cpg.pval), rownames(FullAnnot))
     cpg.pval = cpg.pval[cpg.intersect]
-    FullAnnot.sub = FullAnnot[names(cpg.pval), ]
     ## match user input CpG to our FullAnnot database
-    names(cpg.pval) = FullAnnot.sub$UCSC_RefGene_Name
+    FullAnnot.sub = FullAnnot[names(cpg.pval), ]
     ## change CpG ids to gene symbols
-    geneID.list = split(cpg.pval, names(cpg.pval))
+    names(cpg.pval) = FullAnnot.sub$UCSC_RefGene_Name
     ## convert cpg.pval to a list, each element of this
     # list is a gene and it's corresponding cpg pvalue
-    rho = vapply(geneID.list, rhoScores, FUN.VALUE = 1)
+    geneID.list = split(cpg.pval, names(cpg.pval))
     ## for each gene, compute its rho score
-    minbeta = vapply(geneID.list, function(x)
-        min(betaScores(x)), FUN.VALUE = 1)
+    rho = vapply(geneID.list, rhoScores, FUN.VALUE = 1)
     ## for each gene, compute its beta value
-
+    #minbeta = vapply(geneID.list, function(x)
+    #    min(betaScores(x)), FUN.VALUE = 1)
+    
     flag = 0
     if(is.null(GS.list)){
         GS.list = getGS(names(geneID.list), GS.type = GS.type)
@@ -99,9 +116,10 @@ methylRRA <- function(cpg.pval, array.type = "450K", FullAnnot = NULL,
     }
     GS.list = lapply(GS.list, na.omit)
 
+    ## calculate gene set size
     GS.sizes = vapply(GS.list, length, FUN.VALUE = 0)
-    GS.list.sub = GS.list[GS.sizes>=minsize & GS.sizes<=maxsize]
     ## filter gene sets by their sizes
+    GS.list.sub = GS.list[GS.sizes>=minsize & GS.sizes<=maxsize]
     message(length(GS.list.sub), " gene sets are being tested...")
     size = vapply(GS.list.sub, length, FUN.VALUE = 0)
     ID = names(GS.list.sub)
@@ -109,17 +127,31 @@ methylRRA <- function(cpg.pval, array.type = "450K", FullAnnot = NULL,
     Count = rep(NA, length(GS.list.sub))
 
     if(method=="ORA"){
-        rhoadj = p.adjust(rho, method = "BH")
-        DEgenes = names(rhoadj)[rhoadj<0.05]
-
+        if(is.null(topDE)){ 
+            ## if topDE is not provided, declare significant genes by sig.cut
+            rhoadj = p.adjust(rho, method = "BH")
+            DEgenes = names(rhoadj)[rhoadj<sig.cut]
+            if(length(DEgenes)==0){
+                warning("No gene is significant under cut-off ", sig.cut, 
+                        ". Use a higher cut-off or \"topDE\" argument.")
+            }else{
+                message(length(DEgenes), 
+                        " genes are significant under cut-off ", sig.cut)
+            } 
+        }else{
+            ## if topDE is provided, use topDE
+            rho = rho[order(rho)]
+            DEgenes = names(rho)[1:floor(topDE)]
+        }
+        
+        ##  total number of genes
         N = length(unique(FullAnnot.sub$UCSC_RefGene_Name))
+        ##  number of DE genes
         m = length(DEgenes)
         if(m==0){
             gs.pval = 1
             Count = 0 
-            warning("No gene is significant under FDR 0.05.")
-        }
-        else{
+        }else{
             for(i in seq_along(GS.list.sub)){
                 q = sum(DEgenes %in% GS.list.sub[[i]])
                 Count[i] = q
@@ -147,7 +179,7 @@ methylRRA <- function(cpg.pval, array.type = "450K", FullAnnot = NULL,
         GS2gene = data.frame(
             ont = rep(names(GS.list), vapply(GS.list, length, FUN.VALUE = 0)),
                 gene = unlist(GS.list))
-        zscore = qnorm(minbeta/2, lower.tail = FALSE)
+        zscore = qnorm(rho/2, lower.tail = FALSE)
         zscore = zscore[order(zscore, decreasing = TRUE)]
         zscore[is.infinite(zscore)] = suppressWarnings(
             max(zscore[-which(is.infinite(zscore))]))

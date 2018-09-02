@@ -5,15 +5,19 @@
 \title{Adjusting number of probes in gene set testing
 using gometh or gsameth in missMethyl}
 \usage{
-methylgometh(cpg.pval, sig.cut, array.type = "450K", GS.list = NULL,
-  GS.idtype = "SYMBOL", GS.type = "GO", minsize = 100,
-  maxsize = 500)
+methylgometh(cpg.pval, sig.cut = 0.001, topDE = NULL,
+  array.type = "450K", GS.list = NULL, GS.idtype = "SYMBOL",
+  GS.type = "GO", minsize = 100, maxsize = 500)
 }
 \arguments{
 \item{cpg.pval}{A named vector containing p-values of
 differential methylation test. Names should be CpG IDs.}
 
-\item{sig.cut}{A numeric value indicating cut-off value for significant CpG.}
+\item{sig.cut}{A numeric value indicating cut-off value for significant CpG.
+Default is 0.001. This argument will be ignored if topDE is provided.}
+
+\item{topDE}{An integer. The top number of CpGs to be declared as 
+significant.}
 
 \item{array.type}{A string. Either "450K" or "EPIC". Default is "450K".}
 

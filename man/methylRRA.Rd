@@ -6,9 +6,9 @@
 each gene by Robust Rank Aggregation}
 \usage{
 methylRRA(cpg.pval, array.type = "450K", FullAnnot = NULL,
-  group = "all", method = "ORA", GS.list = NULL,
-  GS.idtype = "SYMBOL", GS.type = "GO", minsize = 100,
-  maxsize = 500)
+  group = "all", method = "ORA", sig.cut = 0.05, topDE = NULL,
+  GS.list = NULL, GS.idtype = "SYMBOL", GS.type = "GO",
+  minsize = 100, maxsize = 500)
 }
 \arguments{
 \item{cpg.pval}{A named vector containing p-values of differential
@@ -23,6 +23,14 @@ Default is NULL.}
 \item{group}{A string. "all", "body" or "promoter". Default is "all".}
 
 \item{method}{A string. "ORA" or "GSEA". Default is "ORA"}
+
+\item{sig.cut}{A numeric value indicating FDR cut-off for significant gene
+in ORA. Default is 0.05. This argument will be ignored if topDE is provided
+or method = "GSEA" is used.}
+
+\item{topDE}{An integer. The top number of genes to be declared as 
+significant after robust rank aggregation. This argument will be ignored
+if method = "GSEA" is used.}
 
 \item{GS.list}{A list. Default is NULL. If there is no input list,
 Gene Ontology is used. Entry names are gene sets names, and elements
