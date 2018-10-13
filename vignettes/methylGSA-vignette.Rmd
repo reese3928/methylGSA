@@ -20,12 +20,12 @@ knitr::opts_chunk$set(comment = "", message=FALSE, warning = FALSE)
 ## Introduction
 
 The methylGSA package contains functions to carry out gene set analysis 
-adjusting for the number of probes of each gene. It has been shown by 
+adjusting for the number of CpGs of each gene. It has been shown by 
 Geeleher et al [1] that gene set analysis is extremely biased for DNA 
-methylation data. This package contains three functions to adjust for the 
+methylation data. This package contains three main functions to adjust for the 
 bias in gene set analysis. 
 
-* methylglm: Incorporating number of probes as a covariate in 
+* methylglm: Incorporating number of CpGs as a covariate in 
 logistic regression. 
 
 * methylRRA: Adjusting for multiple p-values of each gene by Robust 
@@ -33,15 +33,15 @@ Rank Aggregation [2], and then apply either
 over-representation analysis (ORA) or Preranked version of Gene Set Enrichment 
 Analysis (GSEAPreranked) [3] in gene set testing. 
 
-* methylgometh: Adjusting the number of probes for each gene by 
+* methylgometh: Adjusting the number of CpGs for each gene by 
 weighted resampling and Wallenius non-central hypergeometric approximation. 
 (via missMethyl [4])
 
-## Supported gene sets/pathways and gene ID types
+## Supported gene sets and gene ID types
 
-* Gene Ontology (via org.Hs.eg.db)
-* KEGG (via org.Hs.eg.db)
-* Reactome (via reactome.db)
+* Gene Ontology (via org.Hs.eg.db [5])
+* KEGG (via org.Hs.eg.db [5])
+* Reactome (via reactome.db [6])
 * User-supplied gene sets. Supported input gene ID types:
     + "SYMBOL"
     + "ENSEMBL"
@@ -50,25 +50,27 @@ weighted resampling and Wallenius non-central hypergeometric approximation.
     
 ## Supported array types
 
-* "450K" (via [5])
-* "EPIC" (via [6])
-* User-supplied mapping between CpG ID and gene name.
+* Infinium Human Methylation 450K BeadChip 
+(via IlluminaHumanMethylation450kanno.ilmn12.hg19 [7])
+* Infinium Methylation EPIC BeadChip 
+(via IlluminaHumanMethylationEPICanno.ilm10b2.hg19 [8])
+* User supplied mapping between CpG ID and gene name
 
 ## Description of methylglm
 
-methylglm is an extention of GOglm [7]. GOglm adjusts 
+methylglm is an extention of GOglm [9]. GOglm adjusts 
 length bias for RNA-Seq data by incorporating gene length as a covariate 
-in logistic regression model. We adjust length bias in DNA methylation by 
-the number of probes instead of gene length. For each gene set, we fit a 
+in logistic regression model. methylglm adjusts length bias in DNA methylation 
+by the number of CpGs instead of gene length. For each gene set, we fit a 
 logistic regression model:
 
 $$logit (\pi_{i}) = \beta_{0} + \beta_{1}x_{i} + \beta_{2}c_{i}$$
 For each gene $i$, $\pi_{i}$ = Pr(gene $i$ is in gene set), $x_{i}$ represents 
 negative log transform of its minimum p-value, and $c_{i}$ is log transform of 
-its number of probes.
+its number of CpGs.
 
 methylglm requires only a simple named vector. This vector contains p-values of 
-each probe. Names should be their corresponding probe IDs. 
+each CpG. Names should be their corresponding CpG IDs. 
 
 ### Example
 
@@ -84,7 +86,7 @@ data(cpgtoy)
 head(cpg.pval, 20)
 ```
 
-Once the input vector is ready, we call methylglm:
+Then call methylglm:
 
 ```{r}
 res1 = methylglm(cpg.pval = cpg.pval, minsize = 200, 
@@ -92,7 +94,7 @@ res1 = methylglm(cpg.pval = cpg.pval, minsize = 200,
 head(res1, 15)
 ```
 
-Result is a data frame ranked by pvalues of gene sets.
+Result is a data frame ranked by p-values of gene sets.
 
 
 ## Description of methylRRA
@@ -101,29 +103,31 @@ Robust rank aggregation [2] is a parameter free model that
 aggregates several ranked gene lists into a single gene list. The aggregation 
 assumes random order of input lists and assign each gene a p-value based on 
 order statistics. We apply this order statistics idea to adjust for number 
-of probes. 
+of CpGs. 
 
-For gene $i$, let $P_{1}, P_{2}, ... P_{n}$ be the p-values of its probes. 
+For gene $i$, let $P_{1}, P_{2}, ... P_{n}$ be the p-values of individual CpGs. 
 Under the null hypothesis, 
 $P_{1}, P_{2}, ... P_{n} ~ \overset{i.i.d}{\sim} Unif[0, 1]$. 
 Let $P_{(1)}, P_{(2)}, ... P_{(n)}$ be the order statistics. Define: 
 $$\rho = 
-min\{Pr(P_{(1)}<P_{(1)obs}), Pr(P_{(2)}<P_{(2)obs})..., 
-Pr(P_{(n)}<P_{(n)obs}) \} $$
+\text{min}\{\text{Pr}(P_{(1)}<P_{(1)obs}), 
+\text{Pr}(P_{(2)}<P_{(2)\text{obs}})..., 
+Pr(P_{(n)}<P_{(n)\text{obs}}) \} $$
 
-methylRRA supports two approaches to adjust for number of probes, ORA and 
+methylRRA supports two approaches to adjust for number of CpGs, ORA and 
 GSEAPreranked [3]. In ORA approach, for gene $i$, conversion from 
 $\rho$ score into p-value is done by Bonferroni correction [2]. 
 We get a p-value for each gene and these p-values are then corrected for 
 multiple testing use Benjamini & Hochberg procedure 
-[8]. Genes satisfy FDR<0.05 are considered DE genes. 
-Then we apply ORA based on these DE genes. 
+[10]. By default, genes satisfy FDR<0.05 are considered DE genes. If there are
+no DE genes under FDR 0.05, users are able to use `sig.cut` option to specify
+a higher FDR cut-off or `topDE` option to declare top genes to be 
+differentially expressed. We then apply ORA based on these DE genes. 
 
 In GSEAPreranked approach, for gene $i$, we also convert $\rho$ score into 
-p-value by Bonferroni correction. Then we find the upper tail quantile 
-corresponds to p-value/2. We get a quantile for each gene and rank these 
-quantiles in decreasing order. Then we apply Preranked version of Gene Set 
-Enrichment Analysis (GSEAPreranked) on this ordered list.  
+p-value by Bonferroni correction. p-values are converted into z-scores. We then 
+apply Preranked version of Gene Set Enrichment Analysis (GSEAPreranked) on 
+the gene list ranked by the z-scores.  
 
 ### Example
 
@@ -148,13 +152,16 @@ head(res3, 10)
 ## Description of methylgometh
 
 methylgometh calls `gometh` or `gsameth` function in missMethyl 
-package [4] to adjust number of probes in gene set 
-testing. `gometh` modifies goseq method [9] by fitting a 
+package [4] to adjust number of CpGs in gene set 
+testing. `gometh` modifies goseq method [11] by fitting a 
 probability weighting function and resampling from Wallenius non-central 
 hypergeometric distribution. 
 
 methylgometh requires two inputs, `cpg.pval` and `sig.cut`. `sig.cut` specifies
-the cut-off point to call a probe differentially methylated. 
+the cut-off point to declare a CpG as differentially methylated. By default, 
+`sig.cut` is 0.001. Similar to methylRRA, if no CpG is significant, users are 
+able to specify a higher cut-off or use `topDE` option to declare 
+top CpGs to be differentially methylated.
 
 ### Example
 
@@ -177,11 +184,11 @@ prepareAnnot function. Default is NULL. Check example below for details.
 * `group` is the type of CpG the user which to consider. If group is 
 "body" ("promoter"), CpGs on gene body (promoters) will be considered. Default
 is "all", which means all CpGs are considered. 
-* `GS.list` is user input gene sets to be tested. It should be a list with 
+* `GS.list` is user supplied gene sets to be tested. It should be a list with 
 entry names gene sets IDs and elements correpond to genes that gene sets 
 contain. If there is no input list, Gene Ontology is used.
-* `GS.idtype` is the type of gene ID in user input gene sets. If `GS.list` is 
-not empty, then the user is expected to provide gene ID type. Supported ID 
+* `GS.idtype` is the type of gene ID in user supplied gene sets. If `GS.list` 
+is not empty, then the user is expected to provide gene ID type. Supported ID 
 types are "SYMBOL", "ENSEMBL", "ENTREZID", "REFSEQ". Default is "SYMBOL". 
 * `GS.type` is the published gene sets/pathways to be tested if `GS.list` is 
 empty. Supported pathways are "GO", "KEGG", and "Reactome". Default is "GO".
@@ -194,18 +201,18 @@ greater than this integer, this gene set is not tested. Default is 500.
 
 ### Example
 
-Here an example of user input gene sets. The gene ID type is gene symbol
+Here an example of user supplied gene sets. The gene ID type is gene symbol
 ```{r}
 data(GSlisttoy)
 ## to make the display compact, only a proportion of each gene set is shown
-head(lapply(GS.list, function(x) return(x[1:30])), 3)   
+head(lapply(GS.list, function(x) x[1:30]), 3)   
 ```
 
 methylglm and methylRRA support user supplied CpG ID to gene mapping. The 
 mapping is expected to be a matrix, or a data frame or a list. For a 
 matrix or data frame, 1st column should be CpG ID and 2nd column should be gene 
 name. For a list, entry names should be gene names and elements correpond to 
-CpG IDs. This is an example of user-supplied CpG to gene mapping:
+CpG IDs. This is an example of user supplied CpG to gene mapping:
 ```{r}
 data(CpG2Genetoy)
 head(CpG2Gene)   
@@ -218,7 +225,7 @@ FullAnnot = prepareAnnot(CpG2Gene)
 ```
 
 Test the gene sets using "ORA" in methylRRA, use `FullAnnot` argument to 
-provide the preprocessed CpG ID to gene mapping.
+provide the preprocessed CpG ID to gene mapping
 ```{r}
 GS.list = GS.list[1:10]
 res5 = methylRRA(cpg.pval = cpg.pval, FullAnnot = FullAnnot, method = "ORA", 
@@ -237,8 +244,8 @@ head(res6, 10)
 
 ## Visualization
 
-We provide bar plot to visualize the gene set analysis results, similar to the 
-bar plot implemented in enrichplot [10]. The input of `barplot` function can 
+Following bar plot implemented in enrichplot [12], we also provide bar plot to 
+visualize the gene set analysis results. The input of `barplot` function can 
 be any result returned by methylglm, methylRRA, or methylgometh. Various 
 options are provided for users to customize the plot.
 
@@ -286,24 +293,30 @@ Sciences 102 (43). National Acad Sciences: 15545–50.
 MissMethyl: An R Package for Analyzing Data from Illumina's Humanmethylation450 
 Platform. Bioinformatics 32 (2). Oxford University Press: 286–88.
 
-[5] Hansen, KD. 2016a. IlluminaHumanMethylation450kanno.ilmn12.hg19: 
+[5] Carlson M (2018). org.Hs.eg.db: Genome wide annotation for Human. 
+R package version 3.6.0.
+
+[6] Ligtenberg W (2018). reactome.db: A set of annotation maps for reactome. 
+R package version 1.64.0.
+
+[7] Hansen, KD. 2016a. IlluminaHumanMethylation450kanno.ilmn12.hg19: 
 Annotation for Illumina’s 450k Methylation Arrays. R Package, Version 0.6.0 1.
 
-[6] ———. 2016b. IlluminaHumanMethylationEPICanno.ilm10b2.hg19: 
+[8] ———. 2016b. IlluminaHumanMethylationEPICanno.ilm10b2.hg19: 
 Annotation for Illumina’s Epic Methylation Arrays. R Package, Version 0.6.0 1.
 
-[7] Mi, Gu, Yanming Di, Sarah Emerson, Jason S Cumbie, and Jeff H Chang. 2012. 
+[9] Mi, Gu, Yanming Di, Sarah Emerson, Jason S Cumbie, and Jeff H Chang. 2012. 
 Length Bias Correction in Gene Ontology Enrichment Analysis Using 
 Logistic Regression. PloS One 7 (10). Public Library of Science: e46128.
 
-[8] Benjamini, Yoav, and Yosef Hochberg. 1995. Controlling the False 
+[10] Benjamini, Yoav, and Yosef Hochberg. 1995. Controlling the False 
 Discovery Rate: A Practical and Powerful Approach to Multiple Testing.
 Journal of the Royal Statistical Society. Series B (Methodological). 
 JSTOR, 289–300.
 
-[9] Young, Matthew D, Matthew J Wakefield, Gordon K Smyth, and Alicia 
+[11] Young, Matthew D, Matthew J Wakefield, Gordon K Smyth, and Alicia 
 Oshlack. 2012. Goseq: Gene Ontology Testing for Rna-Seq Datasets.
 R Bioconductor.
 
-[10] Yu G (2018). enrichplot: Visualization of Functional Enrichment Result. 
+[12] Yu G (2018). enrichplot: Visualization of Functional Enrichment Result. 
 R package version 1.0.2, https://github.com/GuangchuangYu/enrichplot.

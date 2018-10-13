@@ -1,7 +1,7 @@
 Package: methylGSA
 Type: Package
 Title: Gene Set Analysis Using the Outcome of Differential Methylation
-Version: 0.99.15
+Version: 0.99.16
 Authors@R: c(
     person("Xu", "Ren", 
         email = "xuren2120@gmail.com", role = c("aut", "cre")),
@@ -31,7 +31,8 @@ Depends:
 Suggests:
     knitr,
     rmarkdown,
-    testthat
+    testthat,
+    enrichplot
 License: GPL-2
 URL: https://github.com/reese3928/methylGSA
 RoxygenNote: 6.1.0

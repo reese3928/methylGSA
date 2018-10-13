@@ -165,10 +165,10 @@ methylRRA <- function(cpg.pval, array.type = "450K", FullAnnot = NULL,
             des = getDescription(GSids = ID, GS.type = GS.type)
             res = data.frame(ID = ID, Description = des, Count = Count, 
                              Size = size, pvalue = gs.pval, padj = gs.padj)
-        }
-        else
+        }else{
             res = data.frame(ID = ID, Count = Count, Size = size,
                              pvalue = gs.pval, padj = gs.padj)
+        }
         rownames(res) = ID
         res = res[order(res$pvalue), ]
         message("Done!")

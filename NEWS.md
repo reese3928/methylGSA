@@ -1,3 +1,6 @@
+# methylGSA 0.99.16
+* Minor changes in package vignettes
+
 # methylGSA 0.99.15
 * Bug fix
 * Included "top" and "sig.cut" option for methylRRA
