@@ -1,3 +1,7 @@
+# methylGSA 1.1.1
+* Fixed typos in vignettes
+* Included citation
+
 # methylGSA 0.99.16
 * Minor changes in package vignettes
 

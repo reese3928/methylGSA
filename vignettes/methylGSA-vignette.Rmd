@@ -110,9 +110,9 @@ Under the null hypothesis,
 $P_{1}, P_{2}, ... P_{n} ~ \overset{i.i.d}{\sim} Unif[0, 1]$. 
 Let $P_{(1)}, P_{(2)}, ... P_{(n)}$ be the order statistics. Define: 
 $$\rho = 
-\text{min}\{\text{Pr}(P_{(1)}<P_{(1)obs}), 
+\text{min}\{\text{Pr}(P_{(1)}<P_{(1)\text{obs}}), 
 \text{Pr}(P_{(2)}<P_{(2)\text{obs}})..., 
-Pr(P_{(n)}<P_{(n)\text{obs}}) \} $$
+\text{Pr}(P_{(n)}<P_{(n)\text{obs}}) \} $$
 
 methylRRA supports two approaches to adjust for number of CpGs, ORA and 
 GSEAPreranked [3]. In ORA approach, for gene $i$, conversion from 
