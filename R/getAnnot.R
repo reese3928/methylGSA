@@ -18,7 +18,7 @@
 #' “missMethyl: an R package for analysing methylation data from
 #' Illuminas HumanMethylation450 platform.” Bioinformatics, pp. btv560.
 
-getAnnot = function(array.type, group){
+getAnnot = function(array.type, group = "all"){
     if(array.type=="450K")
         FullAnnot = getAnnotation(IlluminaHumanMethylation450kanno.ilmn12.hg19)
     else
