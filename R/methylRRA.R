@@ -176,13 +176,22 @@ methylRRA <- function(cpg.pval, array.type = "450K", FullAnnot = NULL,
     }
 
     if(method == "GSEA"){
-        GS2gene = data.frame(
-            ont = rep(names(GS.list), vapply(GS.list, length, FUN.VALUE = 0)),
-                gene = unlist(GS.list))
-        zscore = qnorm(rho/2, lower.tail = FALSE)
+    	zscore = qnorm(rho/2, lower.tail = FALSE)
         zscore = zscore[order(zscore, decreasing = TRUE)]
         zscore[is.infinite(zscore)] = suppressWarnings(
             max(zscore[-which(is.infinite(zscore))]))
+        
+        ## drop the gene sets that has all zero z-scores
+        allzero = vapply(GS.list, function(x){
+        	x = intersect(x, names(zscore))
+        	ifelse(all(na.omit(zscore[x])==0), TRUE, FALSE)
+        	}, FALSE) 
+        GS.list = GS.list[!allzero]
+        
+        GS2gene = data.frame(
+            ont = rep(names(GS.list), vapply(GS.list, length, FUN.VALUE = 0)),
+                gene = unlist(GS.list))
+        
         GSEAres = GSEA(geneList = zscore, minGSSize = minsize,
                             maxGSSize = maxsize, pvalueCutoff = 1,
                             TERM2GENE = GS2gene)
