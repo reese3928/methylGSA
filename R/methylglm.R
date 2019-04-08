@@ -101,16 +101,14 @@ methylglm <- function(cpg.pval, array.type = "450K", FullAnnot = NULL,
     ## filter gene sets by their sizes
     message(length(GS.list.sub), " gene sets are being tested...")
 
-    gs.pval = rep(NA, length(GS.list.sub))
-    for(i in seq_along(GS.list.sub)){
-        y = as.numeric(names(gene.pval)%in%GS.list.sub[[i]])
+    gs.pval = vapply(GS.list.sub, function(x){
+        y = as.numeric(names(gene.pval)%in%x)
         df = data.frame(NegLogP = -log(gene.pval), probes = log(probes), y = y)
         glm.fit = glm(y ~ NegLogP + probes, family = "quasibinomial",
-                            data = df, control = list(maxit = 25))
+                      data = df, control = list(maxit = 25))
         sumry = summary(glm.fit)
-        gs.pval[i] =
-            sign(coefficients(glm.fit)[[2]])*sumry$coef[ ,"Pr(>|t|)"][[2]]
-    }
+        sign(coefficients(glm.fit)[[2]])*sumry$coef[ ,"Pr(>|t|)"][[2]]
+    }, 1)
     gs.pval[gs.pval<=0] = 1
     ID = names(GS.list.sub)
     size = vapply(GS.list.sub, length, FUN.VALUE = 1)
