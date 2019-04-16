@@ -20,12 +20,17 @@
 #' less than this integer, this gene set is not tested. Default is 100.
 #' @param maxsize An integer. If the number of genes in a gene set is greater
 #' than this integer, this gene set is not tested. Default is 500.
+#' @param parallel either TRUE or FALSE indicating whether parallel should be
+#' used. Default is FALSE
+#' @param BPPARAM an argument provided to \code{\link{bplapply}}. See
+#' \code{\link[BiocParallel]{register}} for details.
 #' @details The implementation of this function is modified from goglm
 #' function in GOglm package.
 #' @export
 #' @import stats
 #' @import org.Hs.eg.db
 #' @importFrom AnnotationDbi select
+#' @importFrom BiocParallel bplapply bpparam
 #' @return A data frame contains gene set tests results.
 #' @references Mi G, Di Y, Emerson S, Cumbie JS and Chang JH (2012)
 #' Length bias correction in Gene Ontology enrichment analysis using
@@ -47,7 +52,8 @@
 
 methylglm <- function(cpg.pval, array.type = "450K", FullAnnot = NULL,
                             group = "all", GS.list=NULL, GS.idtype = "SYMBOL", 
-                            GS.type = "GO", minsize = 100, maxsize = 500){
+                            GS.type = "GO", minsize = 100, maxsize = 500,
+                            parallel = FALSE, BPPARAM = bpparam()){
     if(!is.vector(cpg.pval) | !is.numeric(cpg.pval) | is.null(names(cpg.pval)))
         stop("Input CpG pvalues should be a named vector")
     if(sum(cpg.pval==0)>0)
@@ -100,15 +106,22 @@ methylglm <- function(cpg.pval, array.type = "450K", FullAnnot = NULL,
     GS.list.sub = GS.list[GS.sizes>=minsize & GS.sizes<=maxsize]
     ## filter gene sets by their sizes
     message(length(GS.list.sub), " gene sets are being tested...")
-
-    gs.pval = vapply(GS.list.sub, function(x){
-        y = as.numeric(names(gene.pval)%in%x)
+    
+    glmFit = function(i){
+        gs = GS.list.sub[[i]]
+        y = as.numeric(names(gene.pval)%in%gs)
         df = data.frame(NegLogP = -log(gene.pval), probes = log(probes), y = y)
         glm.fit = glm(y ~ NegLogP + probes, family = "quasibinomial",
                       data = df, control = list(maxit = 25))
         sumry = summary(glm.fit)
         sign(coefficients(glm.fit)[[2]])*sumry$coef[ ,"Pr(>|t|)"][[2]]
-    }, 1)
+    }
+    if(parallel){
+        temp = bplapply(seq_along(GS.list.sub), glmFit, BPPARAM = BPPARAM)
+        gs.pval = vapply(temp, function(x) x[1], 1)
+    }else{
+        gs.pval = vapply(seq_along(GS.list.sub), glmFit, 1)
+    }
     gs.pval[gs.pval<=0] = 1
     ID = names(GS.list.sub)
     size = vapply(GS.list.sub, length, FUN.VALUE = 1)

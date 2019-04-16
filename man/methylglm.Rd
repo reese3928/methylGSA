@@ -7,7 +7,8 @@ for number of probes in enrichment analysis}
 \usage{
 methylglm(cpg.pval, array.type = "450K", FullAnnot = NULL,
   group = "all", GS.list = NULL, GS.idtype = "SYMBOL",
-  GS.type = "GO", minsize = 100, maxsize = 500)
+  GS.type = "GO", minsize = 100, maxsize = 500, parallel = FALSE,
+  BPPARAM = bpparam())
 }
 \arguments{
 \item{cpg.pval}{A named vector containing p-values of differential
@@ -35,6 +36,12 @@ less than this integer, this gene set is not tested. Default is 100.}
 
 \item{maxsize}{An integer. If the number of genes in a gene set is greater
 than this integer, this gene set is not tested. Default is 500.}
+
+\item{parallel}{either TRUE or FALSE indicating whether parallel should be
+used. Default is FALSE}
+
+\item{BPPARAM}{an argument provided to \code{\link{bplapply}}. See
+\code{\link[BiocParallel]{register}} for details.}
 }
 \value{
 A data frame contains gene set tests results.

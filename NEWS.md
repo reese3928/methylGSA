@@ -1,3 +1,6 @@
+# methylGSA 1.1.5
+* Parallel option is supported
+
 # methylGSA 1.1.1
 * Fixed typos in vignettes
 * Included citation

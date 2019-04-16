@@ -4,7 +4,7 @@
 \alias{getAnnot}
 \title{Get CpG annotation}
 \usage{
-getAnnot(array.type, group)
+getAnnot(array.type, group = "all")
 }
 \arguments{
 \item{array.type}{A string. Either "450K" or "EPIC". Default is "450K".}
