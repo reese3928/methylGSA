@@ -32,7 +32,7 @@ getDescription <- function(GSids, GS.type){
     if(GS.type=="KEGG"){
         KEGGID2NAME = 
             download_KEGG("hsa", keggType="KEGG", 
-                          keyType="kegg")$KEGGPATHID2NAME
+                keyType="kegg")$KEGGPATHID2NAME
         rownames(KEGGID2NAME) = KEGGID2NAME$from
         temp = as.character(KEGGID2NAME[paste0("hsa",GSids), "to"])
         return(temp)

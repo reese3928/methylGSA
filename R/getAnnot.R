@@ -33,7 +33,7 @@ getAnnot = function(array.type, group = "all"){
     FullAnnot$UCSC_RefGene_Name = temp
     ## get the first gene group in each UCSC_RefGene_Group
     temp = vapply(strsplit(FullAnnot$UCSC_RefGene_Group,split=";"),
-                  '[', 1, FUN.VALUE=character(1))
+        '[', 1, FUN.VALUE=character(1))
     FullAnnot$UCSC_RefGene_Group = temp
     
     if(group == "body")

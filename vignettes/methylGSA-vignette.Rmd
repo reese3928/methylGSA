@@ -198,14 +198,23 @@ this integer, this gene set is not tested. Default is 100.
 greater than this integer, this gene set is not tested. Default is 500.
 * In methylRRA, `method` is to specify gene set test method. It is either 
 "ORA" or "GSEA" as described above. 
+* In methylglm, `parallel` is either `TRUE` or `FALSE` indicating whether 
+parallel should be used.
 
-### Example
+### Examples
 
 Here an example of user supplied gene sets. The gene ID type is gene symbol
 ```{r}
 data(GSlisttoy)
 ## to make the display compact, only a proportion of each gene set is shown
 head(lapply(GS.list, function(x) x[1:30]), 3)   
+```
+
+This is an example of running methylglm with parallel
+```{r eval=FALSE}
+library(BiocParallel)
+res_p = methylglm(cpg.pval = cpg.pval, minsize = 200, 
+                  maxsize = 500, GS.type = "KEGG", parallel = TRUE)
 ```
 
 methylglm and methylRRA support user supplied CpG ID to gene mapping. The 

@@ -78,7 +78,7 @@ methylgometh <- function(cpg.pval, sig.cut = 0.001, topDE = NULL,
         }
     }else{
         cpg.pval = cpg.pval[order(cpg.pval)]
-        sig.cpg = names(cpg.pval)[1:floor(topDE)]
+        sig.cpg = names(cpg.pval)[seq_len(floor(topDE))]
     }
     
     if(is.null(GS.list) & (GS.type=="GO"|GS.type=="KEGG")){
@@ -91,11 +91,11 @@ methylgometh <- function(cpg.pval, sig.cut = 0.001, topDE = NULL,
         res$ID = rownames(res)
         if(GS.type=="GO"){
             colnames(res) = c("Description", "Ont", "Size", "Count", 
-                              "pvalue", "padj", "ID")
+                "pvalue", "padj", "ID")
         }
         else{
             colnames(res) = c("Description", "Size", "Count", 
-                              "pvalue", "padj", "ID")
+                "pvalue", "padj", "ID")
         }
         message("Done!")
         return(res)
@@ -135,7 +135,7 @@ methylgometh <- function(cpg.pval, sig.cut = 0.001, topDE = NULL,
         res = cbind(ID, Description, res)
         res = res[order(res[,"P.DE"]),]
         colnames(res) = c("ID", "Description", "Size", 
-                          "Count", "pvalue", "padj")
+            "Count", "pvalue", "padj")
         message("Done!")
         return(res)
     }

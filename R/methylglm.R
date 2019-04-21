@@ -112,7 +112,7 @@ methylglm <- function(cpg.pval, array.type = "450K", FullAnnot = NULL,
         y = as.numeric(names(gene.pval)%in%gs)
         df = data.frame(NegLogP = -log(gene.pval), probes = log(probes), y = y)
         glm.fit = glm(y ~ NegLogP + probes, family = "quasibinomial",
-                      data = df, control = list(maxit = 25))
+            data = df, control = list(maxit = 25))
         sumry = summary(glm.fit)
         sign(coefficients(glm.fit)[[2]])*sumry$coef[ ,"Pr(>|t|)"][[2]]
     }
@@ -130,7 +130,7 @@ methylglm <- function(cpg.pval, array.type = "450K", FullAnnot = NULL,
     if(flag==1){
         des = getDescription(GSids = ID, GS.type = GS.type)
         res = data.frame(ID = ID, Description = des, Size = size,
-                         pvalue = gs.pval, padj = gs.padj)
+            pvalue = gs.pval, padj = gs.padj)
     }
     else
         res = data.frame(ID = ID, Size = size, pvalue = gs.pval, padj = gs.padj)

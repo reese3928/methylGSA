@@ -50,7 +50,7 @@ barplot <- function(res, xaxis = "Size", num = 5,
     if("Description"%in%colnames(res)){
         res = res[!is.na(res$Description),]
         res$Description = factor(res$Description, 
-                                 levels=rev(unique(res$Description)))
+            levels=rev(unique(res$Description)))
     }
     else{
         res = res[!is.na(res$ID),]
@@ -58,11 +58,11 @@ barplot <- function(res, xaxis = "Size", num = 5,
     }
     
     if(nrow(res)>num)
-        res = res[1:num,]
+        res = res[seq_len(num),]
     
     ggplot(res, aes_string(x = txt, y = xaxis, fill = colorby)) +
         scale_fill_continuous(low="red", high="blue", name = colorby, 
-                              guide=guide_colorbar(reverse=TRUE))+
+            guide=guide_colorbar(reverse=TRUE))+
         geom_bar(stat = "identity") + coord_flip() +
         ggtitle(title) + xlab(NULL) + ylab(xaxis)
 }

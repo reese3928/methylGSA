@@ -141,7 +141,7 @@ methylRRA <- function(cpg.pval, array.type = "450K", FullAnnot = NULL,
         }else{
             ## if topDE is provided, use topDE
             rho = rho[order(rho)]
-            DEgenes = names(rho)[1:floor(topDE)]
+            DEgenes = names(rho)[seq_len(floor(topDE))]
         }
         
         ##  total number of genes
@@ -164,10 +164,10 @@ methylRRA <- function(cpg.pval, array.type = "450K", FullAnnot = NULL,
         if(flag==1){
             des = getDescription(GSids = ID, GS.type = GS.type)
             res = data.frame(ID = ID, Description = des, Count = Count, 
-                             Size = size, pvalue = gs.pval, padj = gs.padj)
+                Size = size, pvalue = gs.pval, padj = gs.padj)
         }else{
             res = data.frame(ID = ID, Count = Count, Size = size,
-                             pvalue = gs.pval, padj = gs.padj)
+                pvalue = gs.pval, padj = gs.padj)
         }
         rownames(res) = ID
         res = res[order(res$pvalue), ]
@@ -176,16 +176,16 @@ methylRRA <- function(cpg.pval, array.type = "450K", FullAnnot = NULL,
     }
 
     if(method == "GSEA"){
-    	zscore = qnorm(rho/2, lower.tail = FALSE)
+        zscore = qnorm(rho/2, lower.tail = FALSE)
         zscore = zscore[order(zscore, decreasing = TRUE)]
         zscore[is.infinite(zscore)] = suppressWarnings(
             max(zscore[-which(is.infinite(zscore))]))
         
         ## drop the gene sets that has all zero z-scores
         allzero = vapply(GS.list, function(x){
-        	x = intersect(x, names(zscore))
-        	ifelse(all(na.omit(zscore[x])==0), TRUE, FALSE)
-        	}, FALSE) 
+            x = intersect(x, names(zscore))
+            ifelse(all(na.omit(zscore[x])==0), TRUE, FALSE)
+            }, FALSE) 
         GS.list = GS.list[!allzero]
         
         GS2gene = data.frame(
@@ -202,7 +202,7 @@ methylRRA <- function(cpg.pval, array.type = "450K", FullAnnot = NULL,
             des = getDescription(GSids = GSEAres$ID, GS.type = GS.type)
             GSEAres$Description = des 
             GSEAres = GSEAres[,c("ID","Description","setSize","enrichmentScore",
-                                 "NES","pvalue","p.adjust","leading_edge")]
+                "NES","pvalue","p.adjust","leading_edge")]
         }
         colnames(GSEAres)[which(colnames(GSEAres)=="setSize")] = "Size"
         colnames(GSEAres)[which(colnames(GSEAres)=="p.adjust")] = "padj"
