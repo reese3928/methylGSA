@@ -152,12 +152,9 @@ methylRRA <- function(cpg.pval, array.type = "450K", FullAnnot = NULL,
             gs.pval = 1
             Count = 0 
         }else{
-            for(i in seq_along(GS.list.sub)){
-                q = sum(DEgenes %in% GS.list.sub[[i]])
-                Count[i] = q
-                gs.pval[i] = phyper(q = q, m = m, n = N-m,
-                                        k = size[i], lower.tail=FALSE)
-            }
+            Q = vapply(GS.list.sub,function(x) sum(DEgenes%in%x), 0)
+            Count = Q
+            gs.pval = phyper(q = Q, m = m, n = N-m, k = size, lower.tail=FALSE)
         }
         gs.padj = p.adjust(gs.pval, method = "BH")
         

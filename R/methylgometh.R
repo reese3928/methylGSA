@@ -84,8 +84,8 @@ methylgometh <- function(cpg.pval, sig.cut = 0.001, topDE = NULL,
     if(is.null(GS.list) & (GS.type=="GO"|GS.type=="KEGG")){
         message(GS.type, " are being tested...")
         res = gometh(sig.cpg = sig.cpg, all.cpg = names(cpg.pval),
-                            collection = GS.type, array.type=array.type,
-                            plot.bias = FALSE, prior.prob = TRUE)
+            collection = GS.type, array.type=array.type,
+            plot.bias = FALSE, prior.prob = TRUE)
         res = res[res$N>=minsize & res$N<=maxsize,]
         res = res[order(res$P.DE),]
         res$ID = rownames(res)
@@ -97,6 +97,8 @@ methylgometh <- function(cpg.pval, sig.cut = 0.001, topDE = NULL,
             colnames(res) = c("Description", "Size", "Count", 
                 "pvalue", "padj", "ID")
         }
+        ## re-calculate adjusted p-value
+        res$padj = p.adjust(res$pvalue,method = "BH")
         message("Done!")
         return(res)
     }
@@ -108,14 +110,15 @@ methylgometh <- function(cpg.pval, sig.cut = 0.001, topDE = NULL,
         else
             tempAnnot = getAnnot("EPIC")
 
-        temp = tempAnnot$UCSC_RefGene_Name
+        temp = unique(tempAnnot$UCSC_RefGene_Name)
 
         gene.entrez = suppressMessages(
             select(org.Hs.eg.db, temp, columns = "ENTREZID",
                         keytype = "SYMBOL")$ENTREZID)
         reactome.df = suppressMessages(
             select(reactome.db, gene.entrez, columns = "REACTOMEID",
-                        keytype = "ENTREZID"))
+                keytype = "ENTREZID"))
+        reactome.df = na.omit(reactome.df)
         reactom2entrez = reactome.df$ENTREZID
         names(reactom2entrez) = reactome.df$REACTOMEID
         reactome.list = split(reactom2entrez, names(reactom2entrez))
@@ -136,6 +139,8 @@ methylgometh <- function(cpg.pval, sig.cut = 0.001, topDE = NULL,
         res = res[order(res[,"P.DE"]),]
         colnames(res) = c("ID", "Description", "Size", 
             "Count", "pvalue", "padj")
+        ## re-calculate adjusted p-value
+        res$padj = p.adjust(res$pvalue,method = "BH")
         message("Done!")
         return(res)
     }
@@ -148,9 +153,11 @@ methylgometh <- function(cpg.pval, sig.cut = 0.001, topDE = NULL,
                         keytype = GS.idtype)$ENTREZID))
         }
 
-        else
+        else{
             GS.list.entrezid = GS.list
-
+        }
+            
+        
         GS.list.entrezid = lapply(GS.list.entrezid, na.omit)
         GS.sizes = vapply(GS.list.entrezid, length, FUN.VALUE = 1)
         GS.list.sub = GS.list.entrezid[GS.sizes>=minsize & GS.sizes<=maxsize]

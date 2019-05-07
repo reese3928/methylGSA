@@ -1,3 +1,6 @@
+# methylGSA 1.3.1
+* Bug fixes in methylgometh
+
 # methylGSA 1.1.5
 * Parallel option is supported
 
