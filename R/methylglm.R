@@ -70,8 +70,24 @@ methylglm <- function(cpg.pval, array.type = "450K", FullAnnot = NULL,
                             keytype = GS.idtype)$SYMBOL))
     GS.type = match.arg(GS.type, c("GO", "KEGG", "Reactome"))
     group = match.arg(group, c("all", "body", "promoter"))
+    
+    stopifnot(length(minsize)==1)
+    if(!is.numeric(minsize) | minsize<0)
+        stop("minsize should be a positive number")
+    stopifnot(length(maxsize)==1)
+    if(!is.numeric(maxsize) | maxsize<0)
+        stop("maxsize should be a positive number")
+    if(maxsize<minsize){
+        stop("maxsize should be greater than minsize")
+    }
+    
+    stopifnot(length(parallel)==1)
+    if(!is.logical(parallel)){
+        stop("parallel should be either TRUE or FALSE")
+    }
 
     if(is.null(FullAnnot)){
+        stopifnot(length(array.type)==1)
         if(array.type!="450K" & array.type!="EPIC")
             stop("Input array type should be either 450K or EPIC")
         if(array.type=="450K")

@@ -58,13 +58,30 @@ methylgometh <- function(cpg.pval, sig.cut = 0.001, topDE = NULL,
         stop("Input CpG pvalues should not contain 0")
     if(!is.list(GS.list)&!is.null(GS.list))
         stop("Input gene sets should be a list")
+    
+    stopifnot(length(sig.cut)==1)
     if(!is.numeric(sig.cut) | sig.cut>=1 | sig.cut<=0)
         stop("sig.cut should be a number between 0 and 1")
     if(!is.null(topDE)){
         if(!is.numeric(topDE)|floor(topDE)<=0)
             stop("topDE should be a positive integer")
     }
+    
+    stopifnot(length(array.type)==1)
+    if(array.type!="450K" & array.type!="EPIC")
+        stop("Input array type should be either 450K or EPIC")
+    
     GS.type = match.arg(GS.type, c("GO", "KEGG", "Reactome"))
+    
+    stopifnot(length(minsize)==1)
+    if(!is.numeric(minsize) | minsize<0)
+        stop("minsize should be a positive number")
+    stopifnot(length(maxsize)==1)
+    if(!is.numeric(maxsize) | maxsize<0)
+        stop("maxsize should be a positive number")
+    if(maxsize<minsize){
+        stop("maxsize should be greater than minsize")
+    }
 
     if(is.null(topDE)){
         ## if topDE is not provided, declare significant genes by sig.cut
@@ -77,6 +94,9 @@ methylgometh <- function(cpg.pval, sig.cut = 0.001, topDE = NULL,
                     " CpGs are significant under cut-off ", sig.cut)
         }
     }else{
+        stopifnot(length(topDE)==1)
+        if(!is.numeric(topDE)|floor(topDE)<=0)
+            stop("topDE should be a positive integer")
         cpg.pval = cpg.pval[order(cpg.pval)]
         sig.cpg = names(cpg.pval)[seq_len(floor(topDE))]
     }
@@ -175,4 +195,5 @@ methylgometh <- function(cpg.pval, sig.cut = 0.001, topDE = NULL,
         return(res)
     }
 }
+
 
