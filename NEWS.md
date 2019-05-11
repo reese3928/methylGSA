@@ -1,3 +1,6 @@
+# methylGSA 1.3.2
+* Shiny app is available within the package
+
 # methylGSA 1.3.1
 * Bug fixes in methylgometh
 
