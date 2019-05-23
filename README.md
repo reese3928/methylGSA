@@ -20,14 +20,12 @@ install.packages("shinycssloaders")
 Packages from Bioconductor:    
 If analyzing 450K array, `IlluminaHumanMethylation450kanno.ilmn12.hg19` needs to be installed.
 ```{r}
-if (!requireNamespace("BiocManager", quietly = TRUE))
-install.packages("BiocManager")
+if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
 BiocManager::install("IlluminaHumanMethylation450kanno.ilmn12.hg19")
 ```
 If analyzing EPIC array, `IlluminaHumanMethylationEPICanno.ilm10b2.hg19` needs to be installed.
 ```{r}
-if (!requireNamespace("BiocManager", quietly = TRUE))
-install.packages("BiocManager")
+if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
 BiocManager::install("IlluminaHumanMethylationEPICanno.ilm10b2.hg19")
 ```
 
