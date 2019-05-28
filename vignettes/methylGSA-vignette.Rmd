@@ -17,6 +17,41 @@ vignette: >
 knitr::opts_chunk$set(comment = "", message=FALSE, warning = FALSE)
 ```
 
+## Installation
+
+To install and load methylGSA
+
+```{r eval = FALSE}
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("methylGSA")
+```
+
+```{r}
+library(methylGSA)
+```
+
+Depending on the DNA methylation array type, other packages may be needed 
+before running the analysis.    
+
+If analyzing 450K array, `IlluminaHumanMethylation450kanno.ilmn12.hg19` needs 
+to be loaded.
+```{r}
+library(IlluminaHumanMethylation450kanno.ilmn12.hg19)
+```
+
+If analyzing EPIC array, `IlluminaHumanMethylationEPICanno.ilm10b2.hg19` needs 
+to be loaded.
+```{r eval = FALSE}
+library("IlluminaHumanMethylationEPICanno.ilm10b2.hg19")
+```
+
+If analyzing user-supplied mapping between CpG ID and gene name, neither
+`IlluminaHumanMethylation450kanno.ilmn12.hg19` nor 
+`IlluminaHumanMethylationEPICanno.ilm10b2.hg19` needs to be loaded.
+
+
 ## Introduction
 
 The methylGSA package contains functions to carry out gene set analysis 
@@ -66,8 +101,9 @@ logistic regression model:
 
 $$logit (\pi_{i}) = \beta_{0} + \beta_{1}x_{i} + \beta_{2}c_{i}$$
 For each gene $i$, $\pi_{i}$ = Pr(gene $i$ is in gene set), $x_{i}$ represents 
-negative log transform of its minimum p-value, and $c_{i}$ is log transform of 
-its number of CpGs.
+negative logarithmic transform of its minimum p-value in differential 
+methylation analysis, and $c_{i}$ is logarithmic transform of its number 
+of CpGs. 
 
 methylglm requires only a simple named vector. This vector contains p-values of 
 each CpG. Names should be their corresponding CpG IDs. 
@@ -77,14 +113,14 @@ each CpG. Names should be their corresponding CpG IDs.
 Here is what the input vector looks like:
 
 ```{r}
-library(methylGSA)
-library(IlluminaHumanMethylation450kanno.ilmn12.hg19)
-```
-
-```{r}
 data(cpgtoy)
 head(cpg.pval, 20)
 ```
+
+Please note that the p-values here in `cpg.pval` is just for illustration 
+purposes. They are used to illustrate how to use the functions in methylGSA. 
+The actual p-values in differential methylation analysis may be quite 
+different from the p-values in `cpg.pval`.    
 
 Then call methylglm:
 
@@ -105,7 +141,8 @@ assumes random order of input lists and assign each gene a p-value based on
 order statistics. We apply this order statistics idea to adjust for number 
 of CpGs. 
 
-For gene $i$, let $P_{1}, P_{2}, ... P_{n}$ be the p-values of individual CpGs. 
+For gene $i$, let $P_{1}, P_{2}, ... P_{n}$ be the p-values of individual CpGs 
+in differential methylation analysis. 
 Under the null hypothesis, 
 $P_{1}, P_{2}, ... P_{n} ~ \overset{i.i.d}{\sim} Unif[0, 1]$. 
 Let $P_{(1)}, P_{(2)}, ... P_{(n)}$ be the order statistics. Define: 
