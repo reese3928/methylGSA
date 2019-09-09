@@ -1,7 +1,7 @@
 Package: methylGSA
 Type: Package
 Title: Gene Set Analysis Using the Outcome of Differential Methylation
-Version: 1.3.4
+Version: 1.3.5
 Authors@R: c(
     person("Xu", "Ren", 
         email = "xuren2120@gmail.com", role = c("aut", "cre")),
@@ -27,7 +27,7 @@ Imports:
     AnnotationDbi,
     shiny,
     IlluminaHumanMethylation450kanno.ilmn12.hg19,
-    IlluminaHumanMethylationEPICanno.ilm10b2.hg19
+    IlluminaHumanMethylationEPICanno.ilm10b4.hg19
 Depends:
     R (>= 3.5)
 Suggests:

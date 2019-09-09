@@ -4,7 +4,7 @@
 #' @note In order to run the app, the following R/Bioconductor packages needs
 #' to be installed properly: shinycssloaders, DT, ggplot2, 
 #' IlluminaHumanMethylation450kanno.ilmn12.hg19 (if analyzing 450K array)
-#' IlluminaHumanMethylationEPICanno.ilm10b2.hg19 (if analyzing EPIC array)
+#' IlluminaHumanMethylationEPICanno.ilm10b4.hg19 (if analyzing EPIC array)
 #' @param run Run the app or not. Default is TRUE
 #' @importFrom shiny runApp
 #' @return The shiny app will be opened in a web browser.

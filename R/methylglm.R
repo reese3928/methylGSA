@@ -121,7 +121,17 @@ methylglm <- function(cpg.pval, array.type = "450K", FullAnnot = NULL,
     GS.sizes = vapply(GS.list, length, FUN.VALUE = 1)
     GS.list.sub = GS.list[GS.sizes>=minsize & GS.sizes<=maxsize]
     ## filter gene sets by their sizes
-    message(length(GS.list.sub), " gene sets are being tested...")
+    
+    if(!parallel){
+        message(length(GS.list.sub), " gene sets are being tested...")
+    }else{
+        numworkers = BPPARAM$workers
+        if(!numworkers[[1]]){
+            numworkers = 1
+        }
+        message(length(GS.list.sub), " gene sets are being tested... using ",
+            numworkers, " workers.")
+    }
     
     glmFit = function(i){
         gs = GS.list.sub[[i]]

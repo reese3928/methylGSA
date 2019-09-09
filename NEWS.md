@@ -1,3 +1,6 @@
+# methylGSA 1.3.5
+* Using IlluminaHumanMethylationEPICanno.ilm10b4.hg19
+
 # methylGSA 1.3.2
 * Shiny app is available within the package
 

@@ -25,7 +25,7 @@ from .flattenAnn function in missMethyl package.
 Hansen KD (2016). IlluminaHumanMethylation450kanno.ilmn12.hg19:
 Annotation for Illumina's 450k methylation arrays. R package version 0.6.0.
 
-Hansen KD (2016). IlluminaHumanMethylationEPICanno.ilm10b2.hg19:
+Hansen KD (2017). IlluminaHumanMethylationEPICanno.ilm10b4.hg19:
 Annotation for Illumina's EPIC methylation arrays. R package version 0.6.0,
 https://bitbucket.com/kasperdanielhansen/Illumina_EPIC.
 

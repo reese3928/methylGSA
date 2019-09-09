@@ -19,7 +19,7 @@ This is an interface for Bioconductor package methylGSA.
 In order to run the app, the following R/Bioconductor packages needs
 to be installed properly: shinycssloaders, DT, ggplot2, 
 IlluminaHumanMethylation450kanno.ilmn12.hg19 (if analyzing 450K array)
-IlluminaHumanMethylationEPICanno.ilm10b2.hg19 (if analyzing EPIC array)
+IlluminaHumanMethylationEPICanno.ilm10b4.hg19 (if analyzing EPIC array)
 }
 \examples{
 ## Please note: in this example, the argument run is set to be FALSE in 

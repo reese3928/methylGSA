@@ -41,15 +41,15 @@ to be loaded.
 library(IlluminaHumanMethylation450kanno.ilmn12.hg19)
 ```
 
-If analyzing EPIC array, `IlluminaHumanMethylationEPICanno.ilm10b2.hg19` needs 
+If analyzing EPIC array, `IlluminaHumanMethylationEPICanno.ilm10b4.hg19` needs 
 to be loaded.
 ```{r eval = FALSE}
-library("IlluminaHumanMethylationEPICanno.ilm10b2.hg19")
+library(IlluminaHumanMethylationEPICanno.ilm10b4.hg19)
 ```
 
 If analyzing user-supplied mapping between CpG ID and gene name, neither
 `IlluminaHumanMethylation450kanno.ilmn12.hg19` nor 
-`IlluminaHumanMethylationEPICanno.ilm10b2.hg19` needs to be loaded.
+`IlluminaHumanMethylationEPICanno.ilm10b4.hg19` needs to be loaded.
 
 
 ## Introduction
@@ -88,7 +88,7 @@ weighted resampling and Wallenius non-central hypergeometric approximation.
 * Infinium Human Methylation 450K BeadChip 
 (via IlluminaHumanMethylation450kanno.ilmn12.hg19 [7])
 * Infinium Methylation EPIC BeadChip 
-(via IlluminaHumanMethylationEPICanno.ilm10b2.hg19 [8])
+(via IlluminaHumanMethylationEPICanno.ilm10b4.hg19 [8])
 * User supplied mapping between CpG ID and gene name
 
 ## Description of methylglm
@@ -120,7 +120,7 @@ head(cpg.pval, 20)
 Please note that the p-values here in `cpg.pval` is just for illustration 
 purposes. They are used to illustrate how to use the functions in methylGSA. 
 The actual p-values in differential methylation analysis may be quite 
-different from the p-values in `cpg.pval`.    
+different from the p-values in `cpg.pval` in terms of the magnitude.    
 
 Then call methylglm:
 
@@ -345,10 +345,10 @@ R package version 3.6.0.
 [6] Ligtenberg W (2018). reactome.db: A set of annotation maps for reactome. 
 R package version 1.64.0.
 
-[7] Hansen, KD. 2016a. IlluminaHumanMethylation450kanno.ilmn12.hg19: 
+[7] Hansen, KD. (2016). IlluminaHumanMethylation450kanno.ilmn12.hg19: 
 Annotation for Illumina’s 450k Methylation Arrays. R Package, Version 0.6.0 1.
 
-[8] ———. 2016b. IlluminaHumanMethylationEPICanno.ilm10b2.hg19: 
+[8] Hansen, KD. (2017). IlluminaHumanMethylationEPICanno.ilm10b4.hg19: 
 Annotation for Illumina’s Epic Methylation Arrays. R Package, Version 0.6.0 1.
 
 [9] Mi, Gu, Yanming Di, Sarah Emerson, Jason S Cumbie, and Jeff H Chang. 2012. 

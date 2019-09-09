@@ -24,7 +24,7 @@ server <- function(input, output) {
         if(input$array.type=="450K"){
             suppressMessages(library(IlluminaHumanMethylation450kanno.ilmn12.hg19))
         }else{
-            suppressMessages(library(IlluminaHumanMethylationEPICanno.ilm10b2.hg19))
+            suppressMessages(library(IlluminaHumanMethylationEPICanno.ilm10b4.hg19))
         }
         
         if(inputmethod() == "methylglm"){
