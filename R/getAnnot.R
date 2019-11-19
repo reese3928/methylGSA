@@ -19,11 +19,12 @@
 #' Illuminas HumanMethylation450 platform.” Bioinformatics, pp. btv560.
 
 getAnnot = function(array.type, group = "all"){
-    if(array.type=="450K")
+    if(array.type=="450K"){
         FullAnnot = getAnnotation(IlluminaHumanMethylation450kanno.ilmn12.hg19)
-    else
+    }else{
         FullAnnot = getAnnotation(IlluminaHumanMethylationEPICanno.ilm10b4.hg19)
-
+    }
+        
     FullAnnot = FullAnnot[,c("Name","UCSC_RefGene_Name","UCSC_RefGene_Group")]
     FullAnnot = FullAnnot[str_length(rownames(FullAnnot))==10,]
     FullAnnot = FullAnnot[!FullAnnot$UCSC_RefGene_Name=="",]
@@ -36,12 +37,14 @@ getAnnot = function(array.type, group = "all"){
         '[', 1, FUN.VALUE=character(1))
     FullAnnot$UCSC_RefGene_Group = temp
     
-    if(group == "body")
+    if(group == "body"){
         FullAnnot = FullAnnot[
             FullAnnot$UCSC_RefGene_Group%in%c("Body", "1stExon"),]
-    
-    if(group == "promoter")
+    }
+        
+    if(group == "promoter"){
         FullAnnot = FullAnnot[grepl("TSS",FullAnnot$UCSC_RefGene_Group),]
-
+    }
+        
     return(FullAnnot)
 }

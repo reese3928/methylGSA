@@ -21,10 +21,12 @@
 
 getGS = function(geneids, GS.type){
     message("retrieving ", GS.type, " sets...")
-    if(GS.type == "KEGG")
+    if(GS.type == "KEGG"){
         GS.type = "PATH"
-    if(GS.type == "GO")
+    }
+    if(GS.type == "GO"){
         GS.type = "GOALL"
+    }
     if(GS.type == "Reactome"){
         ## first convert id to entrezid to use reactome.db
         gene.entrez = suppressMessages(
@@ -38,8 +40,7 @@ getGS = function(geneids, GS.type){
                         columns = "SYMBOL", keytype = "ENTREZID")$SYMBOL)
         GS.type = "REACTOMEID"
 
-    }
-    else{
+    }else{
         GOs = suppressMessages(
             na.omit(unique(
                 select(org.Hs.eg.db, geneids,

@@ -52,33 +52,41 @@ methylgometh <- function(cpg.pval, sig.cut = 0.001, topDE = NULL,
                                 GS.type = "GO",
                                 minsize = 100, maxsize = 500){
     ## check input
-    if(!is.vector(cpg.pval) | !is.numeric(cpg.pval) | is.null(names(cpg.pval)))
+    if(!is.vector(cpg.pval)|!is.numeric(cpg.pval)|is.null(names(cpg.pval))){
         stop("Input CpG pvalues should be a named vector")
-    if(sum(cpg.pval==0)>0)
+    }
+    if(sum(cpg.pval==0)>0){
         stop("Input CpG pvalues should not contain 0")
-    if(!is.list(GS.list)&!is.null(GS.list))
+    }
+    if(!is.list(GS.list)&!is.null(GS.list)){
         stop("Input gene sets should be a list")
-    
+    }
+        
     stopifnot(length(sig.cut)==1)
-    if(!is.numeric(sig.cut) | sig.cut>=1 | sig.cut<=0)
+    if(!is.numeric(sig.cut) | sig.cut>=1 | sig.cut<=0){
         stop("sig.cut should be a number between 0 and 1")
+    }
     if(!is.null(topDE)){
-        if(!is.numeric(topDE)|floor(topDE)<=0)
+        if(!is.numeric(topDE)|floor(topDE)<=0){
             stop("topDE should be a positive integer")
+        }
     }
     
     stopifnot(length(array.type)==1)
-    if(array.type!="450K" & array.type!="EPIC")
+    if(array.type!="450K" & array.type!="EPIC"){
         stop("Input array type should be either 450K or EPIC")
-    
+    }
+        
     GS.type = match.arg(GS.type, c("GO", "KEGG", "Reactome"))
     
     stopifnot(length(minsize)==1)
-    if(!is.numeric(minsize) | minsize<0)
+    if(!is.numeric(minsize) | minsize<0){
         stop("minsize should be a positive number")
+    }
     stopifnot(length(maxsize)==1)
-    if(!is.numeric(maxsize) | maxsize<0)
+    if(!is.numeric(maxsize) | maxsize<0){
         stop("maxsize should be a positive number")
+    }
     if(maxsize<minsize){
         stop("maxsize should be greater than minsize")
     }
@@ -95,8 +103,9 @@ methylgometh <- function(cpg.pval, sig.cut = 0.001, topDE = NULL,
         }
     }else{
         stopifnot(length(topDE)==1)
-        if(!is.numeric(topDE)|floor(topDE)<=0)
+        if(!is.numeric(topDE)|floor(topDE)<=0){
             stop("topDE should be a positive integer")
+        }
         cpg.pval = cpg.pval[order(cpg.pval)]
         sig.cpg = names(cpg.pval)[seq_len(floor(topDE))]
     }
@@ -112,8 +121,7 @@ methylgometh <- function(cpg.pval, sig.cut = 0.001, topDE = NULL,
         if(GS.type=="GO"){
             colnames(res) = c("Description", "Ont", "Size", "Count", 
                 "pvalue", "padj", "ID")
-        }
-        else{
+        }else{
             colnames(res) = c("Description", "Size", "Count", 
                 "pvalue", "padj", "ID")
         }
@@ -125,11 +133,12 @@ methylgometh <- function(cpg.pval, sig.cut = 0.001, topDE = NULL,
 
     if(is.null(GS.list) & GS.type=="Reactome"){
         message(GS.type, " are being tested...")
-        if(array.type=="450K")
+        if(array.type=="450K"){
             tempAnnot = getAnnot("450K")
-        else
+        }else{
             tempAnnot = getAnnot("EPIC")
-
+        }
+            
         temp = unique(tempAnnot$UCSC_RefGene_Name)
 
         gene.entrez = suppressMessages(
@@ -163,21 +172,16 @@ methylgometh <- function(cpg.pval, sig.cut = 0.001, topDE = NULL,
         res$padj = p.adjust(res$pvalue,method = "BH")
         message("Done!")
         return(res)
-    }
-
-    else{
+    }else{
         if(!is.null(GS.list) & GS.idtype!="ENTREZID"){
             message("Converting gene IDs...")
         GS.list.entrezid = suppressMessages( lapply(GS.list, function(x)
             select(org.Hs.eg.db, x, columns = "ENTREZID",
                         keytype = GS.idtype)$ENTREZID))
-        }
-
-        else{
+        }else{
             GS.list.entrezid = GS.list
         }
             
-        
         GS.list.entrezid = lapply(GS.list.entrezid, na.omit)
         GS.sizes = vapply(GS.list.entrezid, length, FUN.VALUE = 1)
         GS.list.sub = GS.list.entrezid[GS.sizes>=minsize & GS.sizes<=maxsize]

@@ -9,7 +9,15 @@
 #' This argument will be ignored if FullAnnot is provided.
 #' @param FullAnnot A data frame provided by prepareAnnot function.
 #' Default is NULL.
-#' @param group A string. "all", "body" or "promoter". Default is "all".
+#' @param group A string. "all", "body" or "promoter". Default is "all". If 
+#' group = "body", only CpGs on gene body will be considered in methylglm. 
+#' If group = "promoter", only CpGs on promoters will be considered. "body" 
+#' ("promoter") is defined as CpGs whose gene group are "Body" or "1stExon" 
+#' ("TSS1500" or "TSS200") according to the annotation in 
+#' IlluminaHumanMethylation450kanno.ilmn12.hg19 or 
+#' IlluminaHumanMethylationEPICanno.ilm10b4.hg19. If group = "all", all CpGs 
+#' are considered regardless of their gene group.
+#' @param method A string. "ORA" or "GSEA". Default is "ORA"
 #' @param GS.list A list. Default is NULL. If there is no input list,
 #' Gene Ontology is used. Entry names are gene sets names, and elements
 #' correpond to genes that gene sets contain.
@@ -54,29 +62,34 @@ methylglm <- function(cpg.pval, array.type = "450K", FullAnnot = NULL,
                             group = "all", GS.list=NULL, GS.idtype = "SYMBOL", 
                             GS.type = "GO", minsize = 100, maxsize = 500,
                             parallel = FALSE, BPPARAM = bpparam()){
-    if(!is.vector(cpg.pval) | !is.numeric(cpg.pval) | is.null(names(cpg.pval)))
+    if(!is.vector(cpg.pval)|!is.numeric(cpg.pval)|is.null(names(cpg.pval))){
         stop("Input CpG pvalues should be a named vector")
-    if(sum(cpg.pval==0)>0)
+    }
+    if(sum(cpg.pval==0)>0){
         stop("Input CpG pvalues should not contain 0")
-    if(!is.list(GS.list)&!is.null(GS.list))
+    }
+    if(!is.list(GS.list)&!is.null(GS.list)){
         stop("Input gene sets should be a list")
+    }
     
     GS.idtype = match.arg(
         GS.idtype,c("SYMBOL", "ENSEMBL", "ENTREZID", "REFSEQ"))
-    if(!is.null(GS.list) & GS.idtype!="SYMBOL")
-        GS.list = suppressMessages(
-            lapply(GS.list, function(x)
-                select(org.Hs.eg.db, x, columns = "SYMBOL",
-                            keytype = GS.idtype)$SYMBOL))
+    if(!is.null(GS.list) & GS.idtype!="SYMBOL"){
+        GS.list = suppressMessages(lapply(GS.list, function(x)
+            select(org.Hs.eg.db, x, columns = "SYMBOL", 
+                keytype = GS.idtype)$SYMBOL))
+    }
     GS.type = match.arg(GS.type, c("GO", "KEGG", "Reactome"))
     group = match.arg(group, c("all", "body", "promoter"))
     
     stopifnot(length(minsize)==1)
-    if(!is.numeric(minsize) | minsize<0)
+    if(!is.numeric(minsize) | minsize<0){
         stop("minsize should be a positive number")
+    }
     stopifnot(length(maxsize)==1)
-    if(!is.numeric(maxsize) | maxsize<0)
+    if(!is.numeric(maxsize) | maxsize<0){
         stop("maxsize should be a positive number")
+    }
     if(maxsize<minsize){
         stop("maxsize should be greater than minsize")
     }
@@ -88,12 +101,14 @@ methylglm <- function(cpg.pval, array.type = "450K", FullAnnot = NULL,
 
     if(is.null(FullAnnot)){
         stopifnot(length(array.type)==1)
-        if(array.type!="450K" & array.type!="EPIC")
+        if(array.type!="450K" & array.type!="EPIC"){
             stop("Input array type should be either 450K or EPIC")
-        if(array.type=="450K")
+        }
+        if(array.type=="450K"){
             FullAnnot = getAnnot("450K", group)
-        else
+        }else{
             FullAnnot = getAnnot("EPIC", group)
+        }
     }
 
     cpg.intersect = intersect(names(cpg.pval), rownames(FullAnnot))
@@ -157,11 +172,12 @@ methylglm <- function(cpg.pval, array.type = "450K", FullAnnot = NULL,
         des = getDescription(GSids = ID, GS.type = GS.type)
         res = data.frame(ID = ID, Description = des, Size = size,
             pvalue = gs.pval, padj = gs.padj)
-    }
-    else
+    }else{
         res = data.frame(ID = ID, Size = size, pvalue = gs.pval, padj = gs.padj)
+    }
+        
     rownames(res) = ID
-    res = res[order(res$pvalue), ]
+    res = res[order(res$pvalue),]
     message("Done!")
     return(res)
 }

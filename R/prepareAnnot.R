@@ -24,20 +24,21 @@ prepareAnnot <- function(CpG2Gene, geneidtype = "SYMBOL"){
         geneidtype,c("SYMBOL", "ENSEMBL", "ENTREZID", "REFSEQ"))
 
     if(is.matrix(CpG2Gene)|is.data.frame(CpG2Gene)){
-        if(!is.character(CpG2Gene[,1]))
+        if(!is.character(CpG2Gene[,1])){
             stop("CpG ID should be characters")
-        if(ncol(CpG2Gene)!=2)
+        }
+        if(ncol(CpG2Gene)!=2){
             stop("CpG2Gene should contain two columns")
+        }
         FullAnnot = data.frame(CpG2Gene)
-    }
-    else if(is.list(CpG2Gene)){
+    }else if(is.list(CpG2Gene)){
         FullAnnot = data.frame(
             CpG = unlist(CpG2Gene),
             gene = rep(names(CpG2Gene),vapply(CpG2Gene, length, FUN.VALUE = 0)))
-    }
-    else
+    }else{
         stop("CpG2Gene should be a matrix or a data frame or a list.")
-
+    }
+    
     colnames(FullAnnot) = c("Name", "UCSC_RefGene_Name")
 
     if(geneidtype!="SYMBOL"){

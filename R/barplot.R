@@ -39,9 +39,10 @@ barplot <- function(res, xaxis = "Size", num = 5,
     xaxis = match.arg(xaxis, c("Size", "Count"))
     colorby = match.arg(colorby, c("pvalue", "padj"))
     
-    if(!is.numeric(num))
+    if(!is.numeric(num)){
         stop("num should be an integer.")
-    
+    }
+        
     if(!"Count"%in%colnames(res)&xaxis=="Count"){
         warning("\"Count\" option not available. \"Size\" is used.")
         xaxis = "Size"
@@ -51,15 +52,15 @@ barplot <- function(res, xaxis = "Size", num = 5,
         res = res[!is.na(res$Description),]
         res$Description = factor(res$Description, 
             levels=rev(unique(res$Description)))
-    }
-    else{
+    }else{
         res = res[!is.na(res$ID),]
         res$ID = factor(res$ID, levels=rev(unique(res$ID)))
     }
     
-    if(nrow(res)>num)
+    if(nrow(res)>num){
         res = res[seq_len(num),]
-    
+    }
+        
     ggplot(res, aes_string(x = txt, y = xaxis, fill = colorby)) +
         scale_fill_continuous(low="red", high="blue", name = colorby, 
             guide=guide_colorbar(reverse=TRUE))+
