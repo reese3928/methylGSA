@@ -1,11 +1,7 @@
 Package: methylGSA
 Type: Package
 Title: Gene Set Analysis Using the Outcome of Differential Methylation
-<<<<<<< HEAD
 Version: 1.5.1
-=======
-Version: 1.5.0
->>>>>>> upstream/master
 Authors@R: c(
     person("Xu", "Ren", 
         email = "xuren2120@gmail.com", role = c("aut", "cre")),
