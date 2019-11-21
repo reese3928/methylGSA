@@ -1,3 +1,6 @@
+# methylGSA 1.5.2
+* Updated the definition of "promoter"
+
 # methylGSA 1.5.1
 * Minor updates on package vignette
 

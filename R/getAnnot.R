@@ -2,7 +2,20 @@
 #'
 #' @description This function gets CpG IDs and their corresponding gene symbols.
 #' @param array.type A string. Either "450K" or "EPIC". Default is "450K".
-#' @param group A string. "all", "body" or "promoter". Default is "all".
+#' @param group A string. "all", "body", "promoter1" or "promoter2". 
+#' Default is "all". If group = "body", only CpGs on gene body will be 
+#' pulled out. If group = "promoter1" or group = "promoter2", 
+#' only CpGs on promoters will be pulled out. Here is the definition of "body", 
+#' "promoter1" and "promoter2" according to the annotation in 
+#' IlluminaHumanMethylation450kanno.ilmn12.hg19 or 
+#' IlluminaHumanMethylationEPICanno.ilm10b4.hg19. 
+#' \itemize{
+#'   \item body: CpGs whose gene group correspond to "Body" or "1stExon" 
+#'   \item promoter1: CpGs whose gene group correspond to "TSS1500" or "TSS200"
+#'   \item promoter2: CpGs whose gene group correspond to "TSS1500", "TSS200", 
+#'   "1stExon", or "5'UTR". 
+#' }
+#' If group = "all", all CpGs will be pulled out.
 #' @import IlluminaHumanMethylation450kanno.ilmn12.hg19
 #' @import IlluminaHumanMethylationEPICanno.ilm10b4.hg19
 #' @importFrom stringr str_length
@@ -38,12 +51,18 @@ getAnnot = function(array.type, group = "all"){
     FullAnnot$UCSC_RefGene_Group = temp
     
     if(group == "body"){
-        FullAnnot = FullAnnot[
-            FullAnnot$UCSC_RefGene_Group%in%c("Body", "1stExon"),]
+        FullAnnot = 
+            FullAnnot[FullAnnot$UCSC_RefGene_Group%in%c("Body", "1stExon"),]
     }
         
-    if(group == "promoter"){
+    if(group == "promoter1"){
         FullAnnot = FullAnnot[grepl("TSS",FullAnnot$UCSC_RefGene_Group),]
+    }
+    
+    if(group == "promoter2"){
+        FullAnnot = 
+            FullAnnot[FullAnnot$UCSC_RefGene_Group%in%c("TSS200", "TSS1500", 
+                "1stExon", "5'UTR"),]
     }
         
     return(FullAnnot)

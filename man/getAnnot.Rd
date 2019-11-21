@@ -9,7 +9,20 @@ getAnnot(array.type, group = "all")
 \arguments{
 \item{array.type}{A string. Either "450K" or "EPIC". Default is "450K".}
 
-\item{group}{A string. "all", "body" or "promoter". Default is "all".}
+\item{group}{A string. "all", "body", "promoter1" or "promoter2". 
+Default is "all". If group = "body", only CpGs on gene body will be 
+pulled out. If group = "promoter1" or group = "promoter2", 
+only CpGs on promoters will be pulled out. Here is the definition of "body", 
+"promoter1" and "promoter2" according to the annotation in 
+IlluminaHumanMethylation450kanno.ilmn12.hg19 or 
+IlluminaHumanMethylationEPICanno.ilm10b4.hg19. 
+\itemize{
+  \item body: CpGs whose gene group correspond to "Body" or "1stExon" 
+  \item promoter1: CpGs whose gene group correspond to "TSS1500" or "TSS200"
+  \item promoter2: CpGs whose gene group correspond to "TSS1500", "TSS200", 
+  "1stExon", or "5'UTR". 
+}
+If group = "all", all CpGs will be pulled out.}
 }
 \value{
 A data frame contains CpG IDs and gene symbols.

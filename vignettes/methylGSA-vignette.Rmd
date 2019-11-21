@@ -218,13 +218,18 @@ methylGSA provides many other options for users to customize the analysis.
 provided.
 * `FullAnnot` is preprocessed mapping between CpG ID and gene name provided by
 prepareAnnot function. Default is NULL. Check example below for details. 
-* `group` is the type of CpG to be considered in methylRRA or methylglm. 
-If group is "body" ("promoter"), only CpGs on gene body (promoters) will be 
-considered. "body" ("promoter") is defined as CpGs whose gene group are 
-"Body" or "1stExon" ("TSS1500" or "TSS200") according to the annotation in 
-IlluminaHumanMethylation450kanno.ilmn12.hg19 or 
-IlluminaHumanMethylationEPICanno.ilm10b4.hg19. By default, `group = "all"`, 
-which means all CpGs are considered regardless of their gene group.
+* `group` is the type of CpG to be considered in methylRRA or methylglm. By 
+default, `group` is "all", which means all CpGs are considered regardless 
+of their gene group. If `group` is "body", only CpGs on gene body will be 
+considered. If `group` is "promoter1" or "promoter2", only CpGs on promoters 
+will be considered. Based on the annotation in 
+IlluminaHumanMethylation450kanno.ilmn12.hg19 and 
+IlluminaHumanMethylationEPICanno.ilm10b4.hg19, "body", "promoter1" and 
+"promoter2" are defined as: 
+    + body: CpGs whose gene group correspond to "Body" or "1stExon" 
+    + promoter1: CpGs whose gene group correspond to "TSS1500" or "TSS200"
+    + promoter2: CpGs whose gene group correspond to "TSS1500", "TSS200", 
+      "1stExon", or "5'UTR"    
 * `GS.list` is user supplied gene sets to be tested. It should be a list with 
 entry names gene sets IDs and elements correpond to genes that gene sets 
 contain. If there is no input list, Gene Ontology is used.

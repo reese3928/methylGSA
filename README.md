@@ -23,10 +23,10 @@ If analyzing 450K array, `IlluminaHumanMethylation450kanno.ilmn12.hg19` needs to
 if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
 BiocManager::install("IlluminaHumanMethylation450kanno.ilmn12.hg19")
 ```
-If analyzing EPIC array, `IlluminaHumanMethylationEPICanno.ilm10b2.hg19` needs to be installed.
+If analyzing EPIC array, `IlluminaHumanMethylationEPICanno.ilm10b4.hg19` needs to be installed.
 ```{r}
 if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
-BiocManager::install("IlluminaHumanMethylationEPICanno.ilm10b2.hg19")
+BiocManager::install("IlluminaHumanMethylationEPICanno.ilm10b4.hg19")
 ```
 
 Launch the app

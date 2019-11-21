@@ -20,14 +20,20 @@ This argument will be ignored if FullAnnot is provided.}
 \item{FullAnnot}{A data frame provided by prepareAnnot function.
 Default is NULL.}
 
-\item{group}{A string. "all", "body" or "promoter". Default is "all". If 
-group = "body", only CpGs on gene body will be considered in methylglm. 
-If group = "promoter", only CpGs on promoters will be considered. "body" 
-("promoter") is defined as CpGs whose gene group are "Body" or "1stExon" 
-("TSS1500" or "TSS200") according to the annotation in 
+\item{group}{A string. "all", "body", "promoter1" or "promoter2". 
+Default is "all". If group = "body", only CpGs on gene body will be 
+considered in methylglm. If group = "promoter1" or group = "promoter2", 
+only CpGs on promoters will be considered. Here is the definition of "body", 
+"promoter1" and "promoter2" according to the annotation in 
 IlluminaHumanMethylation450kanno.ilmn12.hg19 or 
-IlluminaHumanMethylationEPICanno.ilm10b4.hg19. If group = "all", all CpGs 
-are considered regardless of their gene group.}
+IlluminaHumanMethylationEPICanno.ilm10b4.hg19. 
+\itemize{
+  \item body: CpGs whose gene group correspond to "Body" or "1stExon" 
+  \item promoter1: CpGs whose gene group correspond to "TSS1500" or "TSS200"
+  \item promoter2: CpGs whose gene group correspond to "TSS1500", "TSS200", 
+  "1stExon", or "5'UTR". 
+}
+If group = "all", all CpGs are considered regardless of their gene group.}
 
 \item{GS.list}{A list. Default is NULL. If there is no input list,
 Gene Ontology is used. Entry names are gene sets names, and elements
