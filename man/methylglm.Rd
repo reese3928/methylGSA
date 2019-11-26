@@ -55,8 +55,6 @@ used. Default is FALSE}
 
 \item{BPPARAM}{an argument provided to \code{\link{bplapply}}. See
 \code{\link[BiocParallel]{register}} for details.}
-
-\item{method}{A string. "ORA" or "GSEA". Default is "ORA"}
 }
 \value{
 A data frame contains gene set tests results.

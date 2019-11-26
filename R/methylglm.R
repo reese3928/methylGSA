@@ -23,7 +23,6 @@
 #'   "1stExon", or "5'UTR". 
 #' }
 #' If group = "all", all CpGs are considered regardless of their gene group.
-#' @param method A string. "ORA" or "GSEA". Default is "ORA"
 #' @param GS.list A list. Default is NULL. If there is no input list,
 #' Gene Ontology is used. Entry names are gene sets names, and elements
 #' correpond to genes that gene sets contain.
