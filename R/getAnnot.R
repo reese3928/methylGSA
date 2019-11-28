@@ -33,9 +33,21 @@
 
 getAnnot = function(array.type, group = "all"){
     if(array.type=="450K"){
-        FullAnnot = getAnnotation(IlluminaHumanMethylation450kanno.ilmn12.hg19)
+        FullAnnot = tryCatch({
+            getAnnotation(IlluminaHumanMethylation450kanno.ilmn12.hg19)
+            },
+            error = function(e){
+                stop("IlluminaHumanMethylation450kanno.ilmn12.hg19 needs to
+be installed and loaded before running methylglm/methylRRA")
+            })
     }else{
-        FullAnnot = getAnnotation(IlluminaHumanMethylationEPICanno.ilm10b4.hg19)
+        FullAnnot = tryCatch({
+            getAnnotation(IlluminaHumanMethylationEPICanno.ilm10b4.hg19)
+        },
+        error = function(e){
+            stop("IlluminaHumanMethylationEPICanno.ilm10b4.hg19 needs to
+be installed and loaded before running methylglm/methylRRA")
+        })
     }
         
     FullAnnot = FullAnnot[,c("Name","UCSC_RefGene_Name","UCSC_RefGene_Group")]
