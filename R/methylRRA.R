@@ -190,19 +190,36 @@ methylRRA <- function(cpg.pval, array.type = "450K", FullAnnot = NULL,
             gs.pval = 1
             Count = 0 
         }else{
-            Q = vapply(GS.list.sub,function(x) sum(DEgenes%in%x), 0)
+            overlap.genes = lapply(GS.list.sub, 
+                function(x) DEgenes[DEgenes%in%x])
+            Q = vapply(overlap.genes, length, 0)
             Count = Q
             gs.pval = phyper(q = Q, m = m, n = N-m, k = size, lower.tail=FALSE)
+            overlap.genes.vec = 
+                vapply(overlap.genes, function(x) paste(x, collapse = ","), "")
         }
         gs.padj = p.adjust(gs.pval, method = "BH")
         
         if(flag==1){
             des = getDescription(GSids = ID, GS.type = GS.type)
-            res = data.frame(ID = ID, Description = des, Count = Count, 
-                Size = size, pvalue = gs.pval, padj = gs.padj)
+            if(all(Count==0)){
+                res = data.frame(ID = ID, Description = des, Count = Count, 
+                    Size = size, pvalue = gs.pval, padj = gs.padj)
+            }else{
+                res = data.frame(ID = ID, Description = des, Count = Count, 
+                    overlap = overlap.genes.vec, Size = size,
+                    pvalue = gs.pval, padj = gs.padj)
+            }
+            
         }else{
-            res = data.frame(ID = ID, Count = Count, Size = size,
-                pvalue = gs.pval, padj = gs.padj)
+            if(all(Count==0)){
+                res = data.frame(ID = ID, Count = Count, Size = size,
+                    pvalue = gs.pval, padj = gs.padj)
+            }else{
+                res = data.frame(ID = ID, Count = Count, 
+                    overlap = overlap.genes.vec, Size = size, 
+                    pvalue = gs.pval, padj = gs.padj)
+            }
         }
         rownames(res) = ID
         res = res[order(res$pvalue), ]
