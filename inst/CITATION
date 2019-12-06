@@ -5,8 +5,11 @@ citEntry(entry="article",
          year = 2018,
          journal = "Bioinformatics",
          doi = "10.1093/bioinformatics/bty892",
-         textVersion = "Ren, X. and Kuan, P. (2018). methylGSA: a Bioconductor 
+         volume = 35,
+         number = 11,
+         pages = 1958--1959,
+         textVersion = "Ren, X., & Kuan, P. F. (2018). methylGSA: a Bioconductor 
          package and Shiny app for DNA methylation data length bias adjustment 
-         in gene set testing. Bioinformatics, bty892, 
+         in gene set testing. Bioinformatics, 35(11), 1958-1959, 
          https://doi.org/10.1093/bioinformatics/bty892")
          
