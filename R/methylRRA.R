@@ -247,14 +247,14 @@ methylRRA <- function(cpg.pval, array.type = "450K", FullAnnot = NULL,
         GSEAres = GSEA(geneList = zscore, minGSSize = minsize,
                             maxGSSize = maxsize, pvalueCutoff = 1,
                             TERM2GENE = GS2gene)
-        GSEAres = GSEAres[,c("ID","setSize","enrichmentScore",
-                                "NES","pvalue","p.adjust","leading_edge")]
+        GSEAres = GSEAres[,c("ID","setSize","enrichmentScore", "NES","pvalue",
+            "p.adjust", "leading_edge","core_enrichment")]
         GSEAres = data.frame(GSEAres)
         if(flag==1){
             des = getDescription(GSids = GSEAres$ID, GS.type = GS.type)
             GSEAres$Description = des 
             GSEAres = GSEAres[,c("ID","Description","setSize","enrichmentScore",
-                "NES","pvalue","p.adjust","leading_edge")]
+                "NES","pvalue","p.adjust","leading_edge","core_enrichment")]
         }
         colnames(GSEAres)[which(colnames(GSEAres)=="setSize")] = "Size"
         colnames(GSEAres)[which(colnames(GSEAres)=="p.adjust")] = "padj"
