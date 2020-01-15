@@ -28,11 +28,13 @@ test_that("check for valid output", {
     res3 = methylRRA(cpg.pval = cpg.pval, FullAnnot = FullAnnot,
                      method = "GSEA", GS.list = GS.list)
     expect_is(res3, 'data.frame')
-    expect_equal(dim(res3)[2], 7)
+    expect_equal(dim(res3)[2], 8)
+    expect_true("core_enrichment"%in%colnames(res3))
     expect_true(all(res3$pvalue>=0 & res3$pvalue<=1))
     expect_true(all(res3$p.adjust>=0 & res3$p.adjust<=1))
     expect_true(all(colnames(res3) %in%
                         c("ID","Size","enrichmentScore",
-                          "NES","pvalue","padj","leading_edge")))
+                          "NES","pvalue","padj","leading_edge",
+                          "core_enrichment")))
 })
 
