@@ -1,3 +1,7 @@
+# methylGSA 1.5.9
+* Bug fixes on Shiny app
+* Updated the definition of "promoter" on Shiny app
+
 # methylGSA 1.5.5
 * In methylRRA(ORA), the overlapping between significant 
 genes and genes in the gene set can be printed out

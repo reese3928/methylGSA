@@ -39,7 +39,7 @@ methylGSA::runExample()
 
 Step-by-step instructions
 ------------
-A step-by-step instructions on the workflow of the app can be found [here](http://www.ams.sunysb.edu/%7Epfkuan/methylGSA/ShinyAppInstruction.html).
+A step-by-step instructions on the workflow of the app can be found [here](https://github.com/reese3928/methylGO-RShiny-app/blob/master/instructions.pdf).
 
 Citation
 ------------

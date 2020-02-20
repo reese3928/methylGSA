@@ -20,7 +20,7 @@ ui <- navbarPage("methylGSA",
                                       column(6,
                                              selectInput(inputId = "group", 
                                                          label = "Group:",
-                                                         choices = c("all", "body", "promoter"), 
+                                                         choices = c("all", "body", "promoter1", "promoter2"), 
                                                          selected = "all")
                                       )
                                   ),
