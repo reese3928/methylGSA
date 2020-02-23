@@ -98,7 +98,7 @@ ui <- navbarPage("methylGSA",
                  tabPanel("Help",
                           fluidRow(
                               column(8,
-                                     includeHTML("https://github.com/reese3928/methylGO-RShiny-app/raw/master/instructions.html")
+                                     includeMarkdown("instructions.md")
                               )
                           )
                           
