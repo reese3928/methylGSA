@@ -1,3 +1,6 @@
+# methylGSA 1.9.1
+* Enhancement in package vignette
+
 # methylGSA 1.5.9
 * Bug fixes on Shiny app
 * Updated the definition of "promoter" on Shiny app

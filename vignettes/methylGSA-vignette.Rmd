@@ -55,7 +55,7 @@ If analyzing user-supplied mapping between CpG ID and gene name, neither
 ## Introduction
 
 The methylGSA package contains functions to carry out gene set analysis 
-adjusting for the number of CpGs of each gene. It has been shown by 
+adjusting for the number of CpGs per gene. It has been shown by 
 Geeleher et al [1] that gene set analysis is extremely biased for DNA 
 methylation data. This package contains three main functions to adjust for the 
 bias in gene set analysis. 
@@ -69,15 +69,15 @@ over-representation analysis (ORA) or Preranked version of Gene Set Enrichment
 Analysis (GSEAPreranked) [3] in gene set testing. 
 
 * methylgometh: Adjusting the number of CpGs for each gene by 
-weighted resampling and Wallenius non-central hypergeometric approximation. 
-(via missMethyl [4])
+weighted resampling and Wallenius non-central hypergeometric approximation 
+(via missMethyl [4]).
 
 ## Supported gene sets and gene ID types
 
 * Gene Ontology (via org.Hs.eg.db [5])
 * KEGG (via org.Hs.eg.db [5])
 * Reactome (via reactome.db [6])
-* User-supplied gene sets. Supported input gene ID types:
+* User-supplied gene sets. Supported gene input ID types:
     + "SYMBOL"
     + "ENSEMBL"
     + "ENTREZID"
@@ -99,7 +99,7 @@ in logistic regression model. methylglm adjusts length bias in DNA methylation
 by the number of CpGs instead of gene length. For each gene set, we fit a 
 logistic regression model:
 
-$$logit (\pi_{i}) = \beta_{0} + \beta_{1}x_{i} + \beta_{2}c_{i}$$
+$$ \text{logit} (\pi_{i}) = \beta_{0} + \beta_{1}x_{i} + \beta_{2}c_{i}$$
 For each gene $i$, $\pi_{i}$ = Pr(gene $i$ is in gene set), $x_{i}$ represents 
 negative logarithmic transform of its minimum p-value in differential 
 methylation analysis, and $c_{i}$ is logarithmic transform of its number 
@@ -117,12 +117,13 @@ data(cpgtoy)
 head(cpg.pval, 20)
 ```
 
-Please note that the p-values here in `cpg.pval` is just for illustration 
-purposes. They are used to illustrate how to use the functions in methylGSA. 
+Please note that the p-values presented here in `cpg.pval` is for illustration 
+purpose only. They are used to show how to utilize the functions in methylGSA. 
+It does not represent p-values from any real data analysis. 
 The actual p-values in differential methylation analysis may be quite 
 different from the p-values in `cpg.pval` in terms of the magnitude.    
 
-Then call methylglm:
+Run methylglm:
 
 ```{r}
 res1 = methylglm(cpg.pval = cpg.pval, minsize = 200, 
@@ -130,7 +131,44 @@ res1 = methylglm(cpg.pval = cpg.pval, minsize = 200,
 head(res1, 15)
 ```
 
-Result is a data frame ranked by p-values of gene sets.
+Result is a data frame ranked by p-values of gene sets. The meaning of each
+column is given below.
+
+```{r echo=FALSE}
+glm_res = data.frame(
+    "Column" = c("ID", 
+                 "Description (N/A for user supplied gene set)",
+                 "Size", "pvalue", "padj"),
+    "Explanation" = c("Gene set ID", "Gene set description", 
+                "Number of genes in gene set", 
+                "p-value in logistic regression", "Adjusted p-value")
+)
+knitr::kable(glm_res)
+```
+
+Bioconductor package
+[org.Hs.eg.db](
+https://bioconductor.org/packages/data/annotation/html/org.Hs.eg.db.html)
+can be used to pull out the genes corresponding a specific pathway. 
+For instance, one of the pathways in the methylglm output above is 
+"Neuroactive ligand-receptor interaction" with KEGG ID 04080. The following 
+code can be used to obtain its genes.
+
+```{r}
+library(org.Hs.eg.db)
+genes_04080 = select(org.Hs.eg.db, "04080", "SYMBOL", keytype = "PATH")
+head(genes_04080)
+```
+
+The following code can be used to get the genes in all the pathways in 
+methylglm output.
+
+```{r eval=FALSE}
+# include all the IDs as the 2nd argument in select function
+genes_all_pathway = select(org.Hs.eg.db, as.character(res1$ID), 
+                     "SYMBOL", keytype = "PATH")
+head(genes_all_pathway)
+```
 
 
 ## Description of methylRRA
@@ -156,7 +194,8 @@ GSEAPreranked [3]. In ORA approach, for gene $i$, conversion from
 $\rho$ score into p-value is done by Bonferroni correction [2]. 
 We get a p-value for each gene and these p-values are then corrected for 
 multiple testing use Benjamini & Hochberg procedure 
-[10]. By default, genes satisfy FDR<0.05 are considered DE genes. If there are
+[10]. By default, genes with False Discovery Rate (FDR) below 0.05 are 
+considered differentially expressed (DE) genes. If there are
 no DE genes under FDR 0.05, users are able to use `sig.cut` option to specify
 a higher FDR cut-off or `topDE` option to declare top genes to be 
 differentially expressed. We then apply ORA based on these DE genes. 
@@ -168,13 +207,30 @@ the gene list ranked by the z-scores.
 
 ### Example
 
-To apply ORA approach, we use argument `method = "ORA"` in methylRRA
+To apply ORA approach, we use argument `method = "ORA"` (default) in methylRRA
 
 ```{r eval=FALSE}
 res2 = methylRRA(cpg.pval = cpg.pval, method = "ORA", 
                     minsize = 200, maxsize = 210)
 head(res2, 15)
 ```
+
+The meaning of each column in the output is given below.
+
+```{r echo=FALSE}
+ora_res = data.frame(
+    "Column" = c("ID", 
+                 "Description (N/A for user supplied gene set)", "Count",
+                 "overlap", "Size", "pvalue", "padj"),
+    "Explanation" = c("Gene set ID", "Gene set description", 
+                "Number of significant genes in the gene set",
+                "Names of significant genes in the gene set",
+                "Number of genes in gene set", 
+                "p-value in ORA", "Adjusted p-value")
+)
+knitr::kable(ora_res)
+```
+
 
 To apply GSEAPreranked approach, we use argument `method = "GSEA"` in methylRRA
 
@@ -184,6 +240,22 @@ res3 = methylRRA(cpg.pval = cpg.pval, method = "GSEA",
 head(res3, 10)
 ```
 
+The meaning of each column in the output is given below.
+
+```{r echo=FALSE}
+gsea_res = data.frame(
+    "Column" = c("ID", 
+                 "Description (N/A for user supplied gene set)", 
+                 "Size", "enrichmentScore", "NES",
+                 "pvalue", "padj"),
+    "Explanation" = c("Gene set ID", "Gene set description", 
+                "Number of genes in gene set",
+                "Enrichment score (see [3] for details)", 
+                "Normalized enrichment score (see [3] for details)",
+                "p-value in GSEA", "Adjusted p-value")
+)
+knitr::kable(gsea_res)
+```
 
 
 ## Description of methylgometh
@@ -231,32 +303,34 @@ IlluminaHumanMethylationEPICanno.ilm10b4.hg19, "body", "promoter1" and
     + promoter2: CpGs whose gene group correspond to "TSS1500", "TSS200", 
       "1stExon", or "5'UTR"    
 * `GS.list` is user supplied gene sets to be tested. It should be a list with 
-entry names gene sets IDs and elements correpond to genes that gene sets 
-contain. If there is no input list, Gene Ontology is used.
+entry names gene set IDs and elements correpond to genes that gene set 
+contain. If there is no input list, Gene Ontology is used by default.
 * `GS.idtype` is the type of gene ID in user supplied gene sets. If `GS.list` 
 is not empty, then the user is expected to provide gene ID type. Supported ID 
 types are "SYMBOL", "ENSEMBL", "ENTREZID", "REFSEQ". Default is "SYMBOL". 
 * `GS.type` is the published gene sets/pathways to be tested if `GS.list` is 
-empty. Supported pathways are "GO", "KEGG", and "Reactome". Default is "GO".
+empty. Supported pathways are "GO" (Gene Ontology), "KEGG", and "Reactome". 
+Default is "GO".
 * `minsize` is an integer. If the number of genes in a gene set is less than 
 this integer, this gene set is not tested. Default is 100.
 * `maxsize` is also an integer. If the number of genes in a gene set is 
 greater than this integer, this gene set is not tested. Default is 500.
 * In methylRRA, `method` is to specify gene set test method. It is either 
-"ORA" or "GSEA" as described above. 
+"ORA" or "GSEA" as described in the previous section. Default is "ORA".
 * In methylglm, `parallel` is either `TRUE` or `FALSE` indicating whether 
-parallel should be used.
+parallel should be used. Default is `FALSE`.
 
 ### Examples
 
-Here an example of user supplied gene sets. The gene ID type is gene symbol
+An example of user supplied gene sets is given below. The gene ID type is 
+gene symbol.
 ```{r}
 data(GSlisttoy)
 ## to make the display compact, only a proportion of each gene set is shown
 head(lapply(GS.list, function(x) x[1:30]), 3)   
 ```
 
-This is an example of running methylglm with parallel
+Below is an example of running methylglm with parallel option
 ```{r eval=FALSE}
 library(BiocParallel)
 res_p = methylglm(cpg.pval = cpg.pval, minsize = 200, 
@@ -267,7 +341,7 @@ methylglm and methylRRA support user supplied CpG ID to gene mapping. The
 mapping is expected to be a matrix, or a data frame or a list. For a 
 matrix or data frame, 1st column should be CpG ID and 2nd column should be gene 
 name. For a list, entry names should be gene names and elements correpond to 
-CpG IDs. This is an example of user supplied CpG to gene mapping:
+CpG IDs. Below an example of user supplied CpG to gene mapping.
 ```{r}
 data(CpG2Genetoy)
 head(CpG2Gene)   
@@ -289,7 +363,7 @@ res5 = methylRRA(cpg.pval = cpg.pval, FullAnnot = FullAnnot, method = "ORA",
 head(res5, 10)
 ```
 
-Here is another example. Test Reactome pathways using methylglm
+Below is another example testing Reactome pathways using methylglm.
 
 ```{r eval=FALSE}
 res6 = methylglm(cpg.pval = cpg.pval, array.type = "450K", 
@@ -315,7 +389,7 @@ Default is 5.
 
 ### Example
 
-Here is an example of using barplot to visualize the result of methylglm
+Below is an example of using barplot to visualize the result of methylglm.
 ```{r}
 barplot(res1, num = 8, colorby = "pvalue")
 ```
